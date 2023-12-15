@@ -1,6 +1,9 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:namer_app/numpad.dart';
 import 'package:provider/provider.dart';
+
+import 'home.dart';
 
 void main() {
   runApp(MyApp());
@@ -57,14 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return HomePage();
     Widget page;
     switch (selectedIndex) {
       case 0:
         page = GeneratorPage();
-        break;
       case 1:
         page = FavouritesPage();
-        break;
+      case 2:
+        page = HomePage();
+      case 3:
+        page = Numpad();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -85,6 +91,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.favorite),
                       label: Text('Favorites'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite),
+                      label: Text('Monefy'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.plus_one),
+                      label: Text('Numpad'),
                     ),
                   ],
                   selectedIndex: selectedIndex,
@@ -131,6 +145,8 @@ class FavouritesPage extends StatelessWidget {
     );
   }
 }
+
+
 
 
 class GeneratorPage extends StatelessWidget {
