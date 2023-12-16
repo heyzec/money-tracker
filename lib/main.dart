@@ -1,12 +1,33 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/numpad.dart';
+import 'package:namer_app/widgets/numpad.dart';
 import 'package:provider/provider.dart';
 
+
+import 'db/database.dart';
 import 'home.dart';
 
-void main() {
+
+// @riverpod
+// String helloWorld(HelloWorldRef ref) {
+//   return 'Hello world';
+// }
+
+void main() async {
   runApp(MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final database = AppDatabase();
+
+  await database.into(database.todoItems).insert(TodoItemsCompanion.insert(
+        title: 'todo: finish drift setup',
+        content: 'We can now write queries and define our own tables.',
+      ));
+  List<TodoItem> allItems = await database.select(database.todoItems).get();
+
+  print('items in database: $allItems');
+
 }
 
 class MyApp extends StatelessWidget {

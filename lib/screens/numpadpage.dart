@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:namer_app/numpad.dart';
+import 'package:namer_app/widgets/numpad.dart';
 
 class NumpadPage extends StatelessWidget {
   @override

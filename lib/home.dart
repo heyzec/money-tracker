@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/numpad.dart';
-import 'package:namer_app/numpadpage.dart';
+import 'package:namer_app/widgets/numpad.dart';
+import 'package:namer_app/screens/numpadpage.dart';
 
 class HomePage extends StatelessWidget {
 
