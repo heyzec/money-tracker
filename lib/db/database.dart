@@ -12,24 +12,42 @@ part 'database.g.dart';
 
 
 
-class Category extends Table {
+@DataClassName("Category")
+class Categories extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
 }
 
-@DriftDatabase(tables: [Category])
+class Transactions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get date => dateTime()();
+  IntColumn get amount => integer()();
+  BoolColumn get isIncome => boolean()();
+  TextColumn get remarks => text()();
+  IntColumn get category => integer().references(Categories, #id)();
+}
+
+@DriftDatabase(tables: [Categories, Transactions])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
 
-  Future<List<CategoryData>> getCategories() async {
-    return await select(category).get();
+  Future<List<Category>> getCategories() async {
+    return await select(categories).get();
   }
 
-  Future<int> insertCategory(CategoryCompanion entry) async {
-    return await into(category).insert(entry);
+  Future<int> insertCategory(CategoriesCompanion entry) async {
+    return await into(categories).insert(entry);
+  }
+
+  Future<int> getTransactionCount() async {
+    return (await select(transactions).get()).length;
+  }
+
+  Future<int> insertTransaction(TransactionsCompanion entry) async {
+    return await into(transactions).insert(entry);
   }
 }
 

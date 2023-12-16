@@ -9,7 +9,7 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  List<CategoryData> allItems = [];
+  List<Category> allItems = [];
 
   Future<void> _initializeStateVariables(context) async {
     var items = await fetchTodoItems(context);
@@ -40,7 +40,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
           title: const Text('Categories'),
         ),
-        body: FutureBuilder<List<CategoryData>>(
+        body: FutureBuilder<List<Category>>(
           future: fetchTodoItems(context),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -75,7 +75,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Future<List<CategoryData>> fetchTodoItems(context) async {
+  Future<List<Category>> fetchTodoItems(context) async {
     var database = Provider.of<AppDatabase>(context);
     return database.getCategories();
   }
@@ -107,7 +107,7 @@ class Enter extends StatelessWidget {
     ElevatedButton(
       onPressed: () {
         final enteredText = _controller.text;
-        database.insertCategory(CategoryCompanion(name: Value(enteredText)));
+        database.insertCategory(CategoriesCompanion(name: Value(enteredText)));
       },
       child: Text('Submit'),
     ),

@@ -1,6 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/widgets/numpad.dart';
+import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:provider/provider.dart';
 
 
@@ -14,16 +14,26 @@ import 'screens/home.dart';
 // }
 
 void main() async {
+  AppDatabase database = AppDatabase();
+
   runApp(
     Provider<AppDatabase>(
-        create: (context) => AppDatabase(),
+        create: (context) => database,
         child: MyApp(),
         dispose: (context, db) => db.close(),
      ),
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-  return;
+
+
+  while (true) {
+    var num = await database.getTransactionCount();
+    print("Number of records ${num}");
+
+    await Future.delayed(Duration(seconds: 10));
+  }
+
 
 
 }
@@ -88,8 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
         page = FavouritesPage();
       case 2:
         page = HomePage();
-      case 3:
-        page = Numpad();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
