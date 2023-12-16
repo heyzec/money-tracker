@@ -12,19 +12,25 @@ part 'database.g.dart';
 
 
 
-class TodoItems extends Table {
+class Category extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get title => text().withLength(min: 6, max: 32)();
-  TextColumn get content => text().named('body')();
-  IntColumn get category => integer().nullable()();
+  TextColumn get name => text()();
 }
 
-@DriftDatabase(tables: [TodoItems])
+@DriftDatabase(tables: [Category])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
+
+  Future<List<CategoryData>> getCategories() async {
+    return await select(category).get();
+  }
+
+  Future<int> insertCategory(CategoryCompanion entry) async {
+    return await into(category).insert(entry);
+  }
 }
 
 LazyDatabase _openConnection() {

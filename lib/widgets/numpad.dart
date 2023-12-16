@@ -167,7 +167,6 @@ class Button extends StatelessWidget {
       child: OutlinedButton(
           onPressed: (){if (callback != null) {
             callback!();
-            print("Yay");
           }},
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(

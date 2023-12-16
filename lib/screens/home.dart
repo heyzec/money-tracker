@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/screens/settings.dart';
 import 'package:namer_app/widgets/numpad.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 
@@ -21,7 +22,12 @@ class HomePage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'Setting Icon',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage())
+                );
+              },
             ), //IconButton
           ], //<Widget
         ),
@@ -58,34 +64,45 @@ class HomePage extends StatelessWidget {
         Center(
 
             child:
-          Row(children: [
+          Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      margin: EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(30), // Adjust the padding to make the button bigger
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.red,
+        ),
+        child: Icon(Icons.add, size: 40, color: Colors.white), // Adjust the icon size
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NumpadPage()),
+          );
+        },
+      ),
+    ),
+    Container(
+      margin: EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+          padding: EdgeInsets.all(30), // Adjust the padding to make the button bigger
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.red,
+        ),
+        child: Icon(Icons.remove, size: 40, color: Colors.white), // Adjust the icon size
+        onPressed: () {
+          // Handle onPressed for the second button
+        },
+      ),
+    ),
+  ],
+)
 
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(20),
-              backgroundColor: Colors.blue, // <-- Button color
-              foregroundColor: Colors.red, // <-- Splash color
-            ),
-            child: Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NumpadPage())
-              );
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Icon(Icons.remove, color: Colors.white),
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(20),
-              backgroundColor: Colors.blue, // <-- Button color
-              foregroundColor: Colors.red, // <-- Splash color
-            )
-          ),
-        ])
         )
       ])
     )

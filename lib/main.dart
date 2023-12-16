@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 
 import 'db/database.dart';
-import 'home.dart';
+import 'screens/home.dart';
 
 
 // @riverpod
@@ -14,19 +14,17 @@ import 'home.dart';
 // }
 
 void main() async {
-  runApp(MyApp());
+  runApp(
+    Provider<AppDatabase>(
+        create: (context) => AppDatabase(),
+        child: MyApp(),
+        dispose: (context, db) => db.close(),
+     ),
+  );
 
   WidgetsFlutterBinding.ensureInitialized();
+  return;
 
-  final database = AppDatabase();
-
-  await database.into(database.todoItems).insert(TodoItemsCompanion.insert(
-        title: 'todo: finish drift setup',
-        content: 'We can now write queries and define our own tables.',
-      ));
-  List<TodoItem> allItems = await database.select(database.todoItems).get();
-
-  print('items in database: $allItems');
 
 }
 

@@ -15,7 +15,7 @@ class NumpadPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-            ), //IconButton
+            ),
           title: const Text('Key in'),
         ),
         body: Numpad(),
