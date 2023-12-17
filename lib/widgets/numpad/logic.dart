@@ -3,31 +3,30 @@ class NumpadLogic {
   int? _register;
   String? _operation;
 
-
-    int _parseToCents(String s) {
-      if (s.isEmpty) {
-        return 0;
-      }
-
-      List<String> arr = s.split(".");
-      int dollars = int.parse(arr[0]);
-      int cents;
-
-      if (arr.length == 1) {
-        cents = 0;
-      } else if (arr[1].length == 1) {
-        cents = int.parse(arr[1]) * 10;
-      } else {
-        cents = int.parse(arr[1]);
-      }
-      return dollars * 100 + cents;
+  int _parseToCents(String s) {
+    if (s.isEmpty) {
+      return 0;
     }
 
-    String _formatFromCents(int n) {
-      int dollars = n ~/ 100;
-      int cents = n % 100;
-        return cents > 0 ? "$dollars.$cents" : "$dollars";
+    List<String> arr = s.split(".");
+    int dollars = int.parse(arr[0]);
+    int cents;
+
+    if (arr.length == 1) {
+      cents = 0;
+    } else if (arr[1].length == 1) {
+      cents = int.parse(arr[1]) * 10;
+    } else {
+      cents = int.parse(arr[1]);
     }
+    return dollars * 100 + cents;
+  }
+
+  String _formatFromCents(int n) {
+    int dollars = n ~/ 100;
+    int cents = n % 100;
+    return cents > 0 ? "$dollars.$cents" : "$dollars";
+  }
 
   String getBuffer() {
     return _buffer;

@@ -25,7 +25,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -62,13 +61,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   child: Cards(items: allItems.map((emp) => emp.name).toList()),
                 ),
                 Text("LOL"),
-                ElevatedButton(onPressed: () {
-                  print("Pressed");
-                }, child: Text("Refresh"))
+                ElevatedButton(
+                    onPressed: () {
+                      print("Pressed");
+                    },
+                    child: Text("Refresh")),
               ],
-
-                            );
-
+            );
           },
         ),
       ),
@@ -82,41 +81,38 @@ class _CategoriesPageState extends State<CategoriesPage> {
 }
 
 class Enter extends StatelessWidget {
-
   final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(context) {
-            var database = Provider.of<AppDatabase>(context);
+    var database = Provider.of<AppDatabase>(context);
 
-            return Row(
-  children: [
-    Expanded(
-      child: TextFormField(
-        controller: _controller,
-        decoration: InputDecoration(labelText: 'Category name'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-      ),
-    ),
-    SizedBox(width: 16.0),
-    ElevatedButton(
-      onPressed: () {
-        final enteredText = _controller.text;
-        database.insertCategory(CategoriesCompanion(name: Value(enteredText)));
-      },
-      child: Text('Submit'),
-    ),
-  ],
-);
-
-
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _controller,
+            decoration: InputDecoration(labelText: 'Category name'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
+          ),
+        ),
+        SizedBox(width: 16.0),
+        ElevatedButton(
+          onPressed: () {
+            final enteredText = _controller.text;
+            database
+                .insertCategory(CategoriesCompanion(name: Value(enteredText)));
+          },
+          child: Text('Submit'),
+        ),
+      ],
+    );
   }
-
 }
 
 class Cards extends StatelessWidget {

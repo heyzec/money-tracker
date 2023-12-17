@@ -1,12 +1,9 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:provider/provider.dart';
-
 
 import 'db/database.dart';
 import 'screens/home.dart';
-
 
 // @riverpod
 // String helloWorld(HelloWorldRef ref) {
@@ -18,24 +15,20 @@ void main() async {
 
   runApp(
     Provider<AppDatabase>(
-        create: (context) => database,
-        child: MyApp(),
-        dispose: (context, db) => db.close(),
-     ),
+      create: (context) => database,
+      child: MyApp(),
+      dispose: (context, db) => db.close(),
+    ),
   );
 
   WidgetsFlutterBinding.ensureInitialized();
 
-
   while (true) {
     var num = await database.getTransactionCount();
-    print("Number of records ${num}");
+    print("Number of records $num");
 
     await Future.delayed(Duration(seconds: 10));
   }
-
-
-
 }
 
 class MyApp extends StatelessWidget {
@@ -76,7 +69,6 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 }
 
 class MyHomePage extends StatefulWidget {
@@ -102,51 +94,49 @@ class _MyHomePageState extends State<MyHomePage> {
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Monefy'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.plus_one),
-                      label: Text('Numpad'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
+    return LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+        body: Row(
+          children: [
+            SafeArea(
+              child: NavigationRail(
+                extended: constraints.maxWidth >= 600,
+                destinations: [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('Home'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text('Favorites'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text('Monefy'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.plus_one),
+                    label: Text('Numpad'),
+                  ),
+                ],
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (value) {
+                  setState(() {
+                    selectedIndex = value;
+                  });
+                },
               ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                ),
+            ),
+            Expanded(
+              child: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: page,
               ),
-            ],
-          ),
-        );
-      }
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -158,7 +148,7 @@ class FavouritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-  final theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     return ListView(
       children: [
@@ -167,14 +157,11 @@ class FavouritesPage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.favorite),
             title: Text(pair.asLowerCase),
-        ),
+          ),
       ],
     );
   }
 }
-
-
-
 
 class GeneratorPage extends StatelessWidget {
   @override
@@ -220,7 +207,6 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
@@ -231,22 +217,20 @@ class BigCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final theme = Theme.of(context);
-  final style = theme.textTheme.displayMedium!.copyWith(
-    color: theme.colorScheme.onPrimary,
-  );
-
+    final theme = Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
 
     return Card(
       color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(20),
-
         child: Text(
           pair.asLowerCase,
           style: style,
           semanticsLabel: "${pair.first} ${pair.second}",
-),
+        ),
       ),
     );
   }
