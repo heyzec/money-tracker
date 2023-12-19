@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
+import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
 import 'package:provider/provider.dart';
 import 'package:drift/drift.dart' show Value;
 
@@ -11,11 +11,38 @@ class NumpadPage extends StatefulWidget {
   State<NumpadPage> createState() => _NumpadPageState();
 }
 
+String dateTimeToString(DateTime dt) {
+  var dayOfWeekLookup = {
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
+    7: "Sun",
+  };
+  var monthLookup = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "June",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec",
+  };
+  return "${dayOfWeekLookup[dt.weekday]}, ${dt.day.toString().padLeft(2, '0')} ${monthLookup[dt.month]} ${dt.year.toString()}";
+}
+
 class _NumpadPageState extends State<NumpadPage> {
-  // Reference to the child widget
   NumpadLogic logic = NumpadLogic();
   bool showCategories = false;
   String display = "0";
+  DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +60,28 @@ class _NumpadPageState extends State<NumpadPage> {
         ),
         body: Column(
           children: [
+            TextButton.icon(
+              onPressed: () async {
+                DateTime? newDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: MIN_DATE,
+                  lastDate: MAX_DATE,
+                );
+                if (newDate == null) {
+                  return;
+                }
+                setState(() {
+                  date = newDate;
+                });
+              },
+              icon: Icon(Icons.calendar_month),
+              label: Text(dateTimeToString(date)),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 200),
               child: Card(
+                color: Colors.lightGreen[200],
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Row(
@@ -44,7 +90,7 @@ class _NumpadPageState extends State<NumpadPage> {
                       Text(display, textScaleFactor: 5),
                       IconButton(
                         icon: const Icon(Icons.backspace),
-                        tooltip: 'Increase volume by 10',
+                        tooltip: 'Backspace',
                         onPressed: () {
                           logic.handle('BS');
                           setState(() {
@@ -88,15 +134,15 @@ class _NumpadPageState extends State<NumpadPage> {
                   );
                 },
                 child: showCategories
-                    ? NumpadLayout(
+                    ? Placeholder()
+                    : NumpadLayout(
                         logic: logic,
                         onUpdate: (String newDisplay) {
                           setState(() {
                             display = newDisplay;
                           });
                         },
-                      )
-                    : Placeholder(),
+                      ),
               ),
             ),
             ElevatedButton(
@@ -115,7 +161,7 @@ class _NumpadPageState extends State<NumpadPage> {
 
                 await database.insertTransaction(
                   TransactionsCompanion(
-                    date: Value(DateTime.now()),
+                    date: Value(date),
                     amount: Value(amount),
                     isIncome: Value(false),
                     remarks: Value("Hi"),

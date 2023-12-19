@@ -14,6 +14,7 @@ part 'database.g.dart';
 class Categories extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
+  TextColumn get iconName => text()();
 }
 
 class Transactions extends Table {

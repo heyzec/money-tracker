@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/categories.dart';
+import 'package:namer_app/screens/settings/categories.dart';
 
 class SettingsPage extends StatelessWidget {
   @override

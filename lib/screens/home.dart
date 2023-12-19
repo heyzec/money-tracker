@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/settings.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/screens/numpadpage.dart';
+import 'package:namer_app/widgets/categorycard.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends StatefulWidget {
@@ -71,6 +73,14 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Column(
           children: [
+            Wrap(
+              children: [
+                CategoryCard(text: 'times', iconName: 'times'),
+                CategoryCard(text: 'plus', iconName: 'plus'),
+                CategoryCard(text: 'home', iconName: 'home'),
+                CategoryCard(text: 'cocktail', iconName: 'cocktail'),
+              ],
+            ),
             Text("Period: $period"),
             Text("start: $startDate"),
             Text("end: $endDate"),
@@ -82,43 +92,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     margin: EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(
-                            30), // Adjust the padding to make the button bigger
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.red,
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        size: 40,
-                        color: Colors.white,
-                      ), // Adjust the icon size
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => NumpadPage()),
-                        );
-                      },
-                    ),
+                    child: HomeEntryButton(false),
                   ),
                   Container(
                     margin: EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(30),
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.red,
-                      ),
-                      child: Icon(
-                        Icons.remove,
-                        size: 40,
-                        color: Colors.white,
-                      ), // Adjust the icon size
-                      onPressed: () {},
-                    ),
+                    child: HomeEntryButton(true),
                   ),
                 ],
               ),
@@ -126,6 +104,35 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class HomeEntryButton extends StatelessWidget {
+  final bool isIncome;
+
+  HomeEntryButton(this.isIncome);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: CircleBorder(),
+        padding: EdgeInsets.all(30),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.red,
+      ),
+      child: Icon(
+        (isIncome ? Icons.add : Icons.remove),
+        size: 40,
+        color: Colors.white,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NumpadPage()),
+        );
+      },
     );
   }
 }
