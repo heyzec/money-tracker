@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/screens/settings.dart';
 import 'package:namer_app/screens/numpadpage.dart';
+import 'package:namer_app/widgets/sidebar.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+enum Period {
+  day,
+  week,
+  month,
+  year,
+  interval,
+  all,
+}
+
+class _HomePageState extends State<HomePage> {
+  Period period = Period.day;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return MaterialApp(
       home: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('Home'),
           actions: <Widget>[
@@ -16,7 +37,7 @@ class HomePage extends StatelessWidget {
               icon: const Icon(Icons.comment),
               tooltip: 'Comment Icon',
               onPressed: () {},
-            ), //IconButton
+            ),
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'Setting Icon',
@@ -26,36 +47,33 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
               },
-            ), //IconButton
-          ], //<Widget
+            ),
+          ],
         ),
-        drawer: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              ListTile(
-                title: const Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-              ListTile(
-                title: const Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-            ],
-          ),
+        drawer: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
+          child: Sidebar(period, (Period newPeriod, [dynamic dates]) {
+            if (newPeriod == Period.interval) {
+              DateTimeRange dateRange = dates as DateTimeRange;
+              startDate = dateRange.start;
+              endDate = dateRange.end;
+            } else if (dates != null) {
+              DateTime date = dates as DateTime;
+              startDate = date;
+              endDate = date;
+            }
+
+            setState(() {
+              period = newPeriod;
+            });
+            _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
+          }),
         ),
         body: Column(
           children: [
+            Text("Period: $period"),
+            Text("start: $startDate"),
+            Text("end: $endDate"),
             Placeholder(),
             Text("Balances"),
             Center(
@@ -99,9 +117,7 @@ class HomePage extends StatelessWidget {
                         size: 40,
                         color: Colors.white,
                       ), // Adjust the icon size
-                      onPressed: () {
-                        // Handle onPressed for the second button
-                      },
+                      onPressed: () {},
                     ),
                   ),
                 ],

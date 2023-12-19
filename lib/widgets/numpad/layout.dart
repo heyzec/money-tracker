@@ -66,6 +66,7 @@ class NumpadLayout extends StatelessWidget {
 class Button extends StatelessWidget {
   final String text;
   final VoidCallback? callback;
+
   Button({required this.text, this.callback});
 
   @override
