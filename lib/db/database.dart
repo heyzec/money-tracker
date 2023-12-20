@@ -13,7 +13,7 @@ part 'database.g.dart';
 @DataClassName("Category")
 class Categories extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
+  TextColumn get name => text().unique()();
   TextColumn get iconName => text()();
 }
 
@@ -37,15 +37,40 @@ class AppDatabase extends _$AppDatabase {
     return await select(categories).get();
   }
 
-  Future<int> insertCategory(CategoriesCompanion entry) async {
-    return await into(categories).insert(entry);
+  Future<int> insertCategory({
+    required String name,
+    required String iconName,
+  }) async {
+    return await into(categories).insert(
+      CategoriesCompanion(
+        name: Value(name),
+        iconName: Value(iconName),
+      ),
+    );
   }
 
   Future<int> getTransactionCount() async {
     return (await select(transactions).get()).length;
   }
 
-  Future<int> insertTransaction(TransactionsCompanion entry) async {
+  Future<int> insertTransaction({
+    required DateTime date,
+    required int amount,
+    required bool isIncome,
+    required String remarks,
+    required String categoryName,
+  }) async {
+    Category category = await (select(categories)
+          ..where((c) => c.name.equals(categoryName)))
+        .getSingle();
+
+    var entry = TransactionsCompanion(
+      date: Value(date),
+      amount: Value(amount),
+      isIncome: Value(false), // TODO: Placeholder
+      remarks: Value("Hi"),   // TODO: Placeholder
+      category: Value(category.id),
+    );
     return await into(transactions).insert(entry);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/widgets/cards/selector_db.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
@@ -43,6 +44,22 @@ class _NumpadPageState extends State<NumpadPage> {
   bool showCategories = false;
   String display = "0";
   DateTime date = DateTime.now();
+  String? selected;
+
+  void insertTransaction(BuildContext context) async {
+    var amount = logic.getValue();
+    var database = Provider.of<AppDatabase>(context, listen: false);
+
+    await database.insertTransaction(
+      date: date,
+      amount: amount,
+      isIncome: false,
+      remarks: "Hi",
+      categoryName: selected!,
+    );
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,73 +121,70 @@ class _NumpadPageState extends State<NumpadPage> {
               ),
             ),
             Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  const begin = Offset(0.0, 1.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOut;
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        const begin = Offset(0.0, 1.0);
+                        const end = Offset.zero;
+                        const curve = Curves.easeInOut;
 
-                  var slideTransition = Tween(begin: begin, end: end).animate(
-                    CurvedAnimation(parent: animation, curve: curve),
-                  );
+                        var slideTransition =
+                            Tween(begin: begin, end: end).animate(
+                          CurvedAnimation(parent: animation, curve: curve),
+                        );
 
-                  return Stack(
-                    children: [
-                      // // Outgoing widget with fade-out effect
-                      // FadeTransition(
-                      //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-                      //   child: child,
-                      // ),
-                      // Incoming widget sliding in from the bottom
-                      SlideTransition(
-                        position: slideTransition,
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                child: showCategories
-                    ? Placeholder()
-                    : NumpadLayout(
-                        logic: logic,
-                        onUpdate: (String newDisplay) {
-                          setState(() {
-                            display = newDisplay;
-                          });
-                        },
-                      ),
-              ),
-            ),
-            ElevatedButton(
-              child: Text("Toggle"),
-              onPressed: () {
-                setState(() {
-                  showCategories = !showCategories;
-                });
-              },
-            ),
-            ElevatedButton(
-              child: Text("Done"),
-              onPressed: () async {
-                var amount = logic.getValue();
-                var database = Provider.of<AppDatabase>(context, listen: false);
-
-                await database.insertTransaction(
-                  TransactionsCompanion(
-                    date: Value(date),
-                    amount: Value(amount),
-                    isIncome: Value(false),
-                    remarks: Value("Hi"),
-                    category: Value(0),
+                        return Stack(
+                          children: [
+                            // // Outgoing widget with fade-out effect
+                            // FadeTransition(
+                            //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+                            //   child: child,
+                            // ),
+                            // Incoming widget sliding in from the bottom
+                            SlideTransition(
+                              position: slideTransition,
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      child: showCategories
+                          ? SelectorWithDbItems((String s) {
+                              setState(() {
+                                selected = s;
+                              });
+                              insertTransaction(context);
+                            })
+                          : NumpadLayout(
+                              logic: logic,
+                              onUpdate: (String newDisplay) {
+                                setState(() {
+                                  display = newDisplay;
+                                });
+                              },
+                            ),
+                    ),
                   ),
-                );
-
-                Navigator.pop(context);
-              },
+                  Expanded(
+                    child: OutlinedButton(
+                      child: Text("Select Category"),
+                      onPressed: () {
+                        setState(() {
+                          showCategories = !showCategories;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

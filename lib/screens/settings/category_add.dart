@@ -1,38 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/db/database.dart';
-import 'package:namer_app/widgets/categorycard.dart';
+import 'package:namer_app/widgets/cards/card_selector.dart';
+import 'package:namer_app/widgets/cards/category_card.dart';
 import 'package:provider/provider.dart';
-import 'package:drift/drift.dart' show Value;
 
-class AddCategoryPage extends StatefulWidget {
+class CategoryAddPage extends StatefulWidget {
   final Function(Category) onSubmit;
 
-  AddCategoryPage(this.onSubmit);
+  CategoryAddPage(this.onSubmit);
 
   @override
-  State<AddCategoryPage> createState() => _AddCategoryPageState();
+  State<CategoryAddPage> createState() => _CategoryAddPageState();
 }
 
-class _AddCategoryPageState extends State<AddCategoryPage> {
+class _CategoryAddPageState extends State<CategoryAddPage> {
   bool initalised = false;
   List<Category> allItems = [];
   final TextEditingController _controller = TextEditingController();
+  CardInfo? selected;
 
   void _onSubmit(context) async {
-    var database = Provider.of<AppDatabase>(context, listen: false);
     final enteredText = _controller.text;
+    if (selected == null || enteredText == "") {
+      print("Bad");
+      return;
+    }
+
+    var database = Provider.of<AppDatabase>(context, listen: false);
+
+    String name = enteredText;
+    String iconName = selected!.iconName;
 
     int id = await database.insertCategory(
-      CategoriesCompanion(
-        name: Value(enteredText),
-        iconName: Value("home"),
-      ),
+      name: name,
+      iconName: iconName,
     );
     widget.onSubmit(
       Category(
         id: id,
-        name: enteredText,
-        iconName: "plus",
+        name: name,
+        iconName: iconName,
       ),
     );
 
@@ -61,6 +68,12 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _onSubmit(context);
+          },
+          child: Icon(Icons.check),
+        ),
         body: Container(
           padding: EdgeInsets.all(20.0),
           child: Column(
@@ -75,37 +88,20 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                   return null;
                 },
               ),
-              AllCategoryCards(),
+              CardSelector(
+                categories: ALL
+                    .map((category) => CardInfo(iconName: category))
+                    .toList(),
+                onSelectCallback: (CardInfo card) {
+                  setState(() {
+                    selected = card;
+                  });
+                },
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class CardsContainer2 extends StatelessWidget {
-  final List<Category> categories;
-
-  CardsContainer2({required this.categories});
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> cards = List.from(
-      categories.map(
-        (category) => CategoryCard(
-          text: category.name,
-          iconName: category.iconName,
-        ),
-      ),
-    );
-    cards.add(
-      ElevatedButton(
-        onPressed: () {},
-        child: CategoryCard(iconName: "plus", text: "Add category"),
-      ),
-    );
-
-    return Wrap(children: cards);
   }
 }

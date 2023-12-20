@@ -1,30 +1,27 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:namer_app/db/database.dart';
-import 'package:namer_app/screens/settings/addcategory.dart';
-import 'package:namer_app/widgets/categorycard.dart';
+import 'package:namer_app/screens/settings/category_add.dart';
+import 'package:namer_app/widgets/cards/category_card.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:provider/provider.dart';
 
-class CategoriesPage extends StatefulWidget {
+class CategoryViewPage extends StatefulWidget {
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<CategoryViewPage> createState() => _CategoryViewPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
-  bool initalised = false;
-  List<Category> allItems = [];
+class _CategoryViewPageState extends State<CategoryViewPage> {
+  List<Category>? allItems;
 
   Future<List<Category>>? fetch(context) async {
-    if (initalised) {
-      initalised = true;
-      return allItems;
+    if (allItems != null) {
+      return allItems!;
     }
-    var items = await fetchTodoItems(context);
+    var items = await fetchCategories(context);
     setState(() {
       allItems = items;
     });
-    initalised = true;
     return items;
   }
 
@@ -42,6 +39,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
           title: const Text('Categories'),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryAddPage((Category item) {
+                  setState(() {
+                    allItems?.add(item);
+                  });
+                }),
+              ),
+            );
+          },
+          child: Icon(Icons.add),
+        ),
         body: FutureBuilder<List<Category>>(
           future: fetch(context),
           builder: (context, snapshot) {
@@ -51,25 +63,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
-            // if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            //   return Center(child: Text('No items available.'));
-            // }
-            print("here");
-            print(allItems);
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No items available.'));
+            }
+            var items = snapshot.data!;
 
             return Column(
               children: [
                 Expanded(
                   child: CardsContainer(
-                    categories: allItems,
+                    categories: items,
                     onSubmit: (Category item) {
                       setState(() {
-                        allItems.add(item);
+                        items.add(item);
                       });
                     },
                   ),
                 ),
-                AllCategoryCards(),
               ],
             );
           },
@@ -78,7 +88,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Future<List<Category>> fetchTodoItems(context) async {
+  Future<List<Category>> fetchCategories(context) async {
     var database = Provider.of<AppDatabase>(context);
     return database.getCategories();
   }
@@ -98,17 +108,6 @@ class CardsContainer extends StatelessWidget {
           text: category.name,
           iconName: category.iconName,
         ),
-      ),
-    );
-    cards.add(
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddCategoryPage(onSubmit)),
-          );
-        },
-        child: CategoryCard(iconName: "plus", text: "Add category"),
       ),
     );
 

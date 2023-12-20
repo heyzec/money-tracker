@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/screens/numpadpage.dart';
-import 'package:namer_app/widgets/categorycard.dart';
+import 'package:namer_app/widgets/cards/category_card.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends StatefulWidget {
@@ -73,14 +74,6 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Column(
           children: [
-            Wrap(
-              children: [
-                CategoryCard(text: 'times', iconName: 'times'),
-                CategoryCard(text: 'plus', iconName: 'plus'),
-                CategoryCard(text: 'home', iconName: 'home'),
-                CategoryCard(text: 'cocktail', iconName: 'cocktail'),
-              ],
-            ),
             Text("Period: $period"),
             Text("start: $startDate"),
             Text("end: $endDate"),

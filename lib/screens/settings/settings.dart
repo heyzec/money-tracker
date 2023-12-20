@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/settings/categories.dart';
+import 'package:namer_app/screens/settings/category_view.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -20,8 +20,10 @@ class SettingsPage extends StatelessWidget {
           children: [
             ListTile(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CategoriesPage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CategoryViewPage()),
+                );
               },
               title: Card(
                 child: Container(

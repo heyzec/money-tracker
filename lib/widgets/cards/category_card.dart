@@ -33,42 +33,38 @@ Color iconNametoColor(String iconName) {
 class CategoryCard extends StatelessWidget {
   final String iconName;
   final String? text;
+  final VoidCallback? onPressed;
+  final bool marked;
 
-  CategoryCard({required this.iconName, required this.text});
+  CategoryCard({
+    required this.iconName,
+    this.text,
+    this.onPressed,
+    this.marked = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     Color color = iconNametoColor(iconName);
-    return Card(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: Column(
-          children: [
-            Icon(
-              color: color,
-              LineIcons.byName(iconName),
-            ),
-            if (text != null)
-              Text(
-                text!,
-                style: TextStyle(color: darken(color)),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onPressed,
+      child: Card(
+        color: marked ? Colors.green : null,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          child: Column(
+            children: [
+              Icon(
+                color: color,
+                LineIcons.byName(iconName),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AllCategoryCards extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      children: List.from(
-        ALL.map(
-          (iconName) => CategoryCard(
-            iconName: iconName,
-            text: null,
+              if (text != null)
+                Text(
+                  text!,
+                  style: TextStyle(color: darken(color)),
+                ),
+            ],
           ),
         ),
       ),
