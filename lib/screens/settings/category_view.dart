@@ -1,9 +1,7 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/settings/category_add.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
-import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:provider/provider.dart';
 
 class CategoryViewPage extends StatefulWidget {

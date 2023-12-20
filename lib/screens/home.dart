@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/screens/numpadpage.dart';
-import 'package:namer_app/widgets/cards/category_card.dart';
+import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends StatefulWidget {

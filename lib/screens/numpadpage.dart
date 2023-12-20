@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/widgets/cards/selector_db.dart';
-import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
+import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
 import 'package:provider/provider.dart';
-import 'package:drift/drift.dart' show Value;
 
 class NumpadPage extends StatefulWidget {
   @override
