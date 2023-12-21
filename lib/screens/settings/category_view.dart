@@ -86,8 +86,8 @@ class _CategoryViewPageState extends ConsumerState<CategoryViewPage> {
     );
   }
 
-  Future<List<Category>> fetchCategories(database) async {
-    return database.getCategories();
+  Future<List<Category>> fetchCategories(AppDatabase database) async {
+    return database.getCategories().get();
   }
 }
 

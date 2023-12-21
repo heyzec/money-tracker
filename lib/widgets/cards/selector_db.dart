@@ -20,7 +20,7 @@ class _SelectorWithDbItemsState extends ConsumerState<SelectorWithDbItems> {
     if (categories != null) {
       return categories!;
     }
-    var items = await database.getCategories();
+    var items = await database.getCategories().get();
     setState(() {
       categories = items;
     });

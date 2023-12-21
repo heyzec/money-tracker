@@ -1,0 +1,31 @@
+import 'categories.drift';
+
+CREATE TABLE transactions (
+    id       INT      NOT NULL PRIMARY KEY AUTOINCREMENT,
+    date     DATETIME NOT NULL,
+    amount   INT      NOT NULL,
+    isIncome BOOLEAN  NOT NULL,
+    remarks  TEXT     NOT NULL,
+    category INT      NOT NULL REFERENCES categories (id)
+) AS "Transaction"; -- quote to not conflict with SQL keyword
+
+getTransactionCount:
+    SELECT COUNT(*) FROM transactions;
+
+insertTransaction:
+    INSERT INTO transactions (date, amount, isIncome, remarks, category)
+    VALUES (
+        :date,
+        :amount,
+        :isIncome,
+        :remarks,
+        (
+            SELECT id FROM categories
+            WHERE name == :categoryName
+        )
+    );
+
+getTransactionsWithinDateRange:
+    SELECT * FROM transactions
+    WHERE date >= :startDate
+        AND date <= :endDate;

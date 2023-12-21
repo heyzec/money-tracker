@@ -116,10 +116,12 @@ class ViewData extends ConsumerWidget {
   ViewData({required this.startDate, required this.endDate});
 
   Future<List<Transaction>> getFuture(AppDatabase database) {
-    return database.getTransactionsWithinDateRange(
-      startDate: startDate,
-      endDate: endDate,
-    );
+    return database
+        .getTransactionsWithinDateRange(
+          startDate: startDate,
+          endDate: endDate,
+        )
+        .get();
   }
 
   @override

@@ -3,34 +3,31 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $CategoriesTable extends Categories
-    with TableInfo<$CategoriesTable, Category> {
+class Categories extends Table with TableInfo<Categories, Category> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $CategoriesTable(this.attachedDatabase, [this._alias]);
+  Categories(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      $customConstraints: 'NOT NULL UNIQUE');
   static const VerificationMeta _iconNameMeta =
       const VerificationMeta('iconName');
-  @override
   late final GeneratedColumn<String> iconName = GeneratedColumn<String>(
-      'icon_name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'iconName', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   @override
   List<GeneratedColumn> get $columns => [id, name, iconName];
   @override
@@ -52,9 +49,9 @@ class $CategoriesTable extends Categories
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('icon_name')) {
+    if (data.containsKey('iconName')) {
       context.handle(_iconNameMeta,
-          iconName.isAcceptableOrUnknown(data['icon_name']!, _iconNameMeta));
+          iconName.isAcceptableOrUnknown(data['iconName']!, _iconNameMeta));
     } else if (isInserting) {
       context.missing(_iconNameMeta);
     }
@@ -72,14 +69,17 @@ class $CategoriesTable extends Categories
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       iconName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}icon_name'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}iconName'])!,
     );
   }
 
   @override
-  $CategoriesTable createAlias(String alias) {
-    return $CategoriesTable(attachedDatabase, alias);
+  Categories createAlias(String alias) {
+    return Categories(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class Category extends DataClass implements Insertable<Category> {
@@ -93,7 +93,7 @@ class Category extends DataClass implements Insertable<Category> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    map['icon_name'] = Variable<String>(iconName);
+    map['iconName'] = Variable<String>(iconName);
     return map;
   }
 
@@ -173,7 +173,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (iconName != null) 'icon_name': iconName,
+      if (iconName != null) 'iconName': iconName,
     });
   }
 
@@ -196,7 +196,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       map['name'] = Variable<String>(name.value);
     }
     if (iconName.present) {
-      map['icon_name'] = Variable<String>(iconName.value);
+      map['iconName'] = Variable<String>(iconName.value);
     }
     return map;
   }
@@ -212,55 +212,51 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   }
 }
 
-class $TransactionsTable extends Transactions
-    with TableInfo<$TransactionsTable, Transaction> {
+class Transactions extends Table with TableInfo<Transactions, Transaction> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TransactionsTable(this.attachedDatabase, [this._alias]);
+  Transactions(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
-  @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
       'date', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _amountMeta = const VerificationMeta('amount');
-  @override
   late final GeneratedColumn<int> amount = GeneratedColumn<int>(
       'amount', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _isIncomeMeta =
       const VerificationMeta('isIncome');
-  @override
   late final GeneratedColumn<bool> isIncome = GeneratedColumn<bool>(
-      'is_income', aliasedName, false,
+      'isIncome', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_income" IN (0, 1))'));
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _remarksMeta =
       const VerificationMeta('remarks');
-  @override
   late final GeneratedColumn<String> remarks = GeneratedColumn<String>(
       'remarks', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _categoryMeta =
       const VerificationMeta('category');
-  @override
   late final GeneratedColumn<int> category = GeneratedColumn<int>(
       'category', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES categories (id)'));
+      $customConstraints: 'NOT NULL REFERENCES categories(id)');
   @override
   List<GeneratedColumn> get $columns =>
       [id, date, amount, isIncome, remarks, category];
@@ -289,9 +285,9 @@ class $TransactionsTable extends Transactions
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
-    if (data.containsKey('is_income')) {
+    if (data.containsKey('isIncome')) {
       context.handle(_isIncomeMeta,
-          isIncome.isAcceptableOrUnknown(data['is_income']!, _isIncomeMeta));
+          isIncome.isAcceptableOrUnknown(data['isIncome']!, _isIncomeMeta));
     } else if (isInserting) {
       context.missing(_isIncomeMeta);
     }
@@ -323,7 +319,7 @@ class $TransactionsTable extends Transactions
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}amount'])!,
       isIncome: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_income'])!,
+          .read(DriftSqlType.bool, data['${effectivePrefix}isIncome'])!,
       remarks: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}remarks'])!,
       category: attachedDatabase.typeMapping
@@ -332,9 +328,12 @@ class $TransactionsTable extends Transactions
   }
 
   @override
-  $TransactionsTable createAlias(String alias) {
-    return $TransactionsTable(attachedDatabase, alias);
+  Transactions createAlias(String alias) {
+    return Transactions(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class Transaction extends DataClass implements Insertable<Transaction> {
@@ -357,7 +356,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['id'] = Variable<int>(id);
     map['date'] = Variable<DateTime>(date);
     map['amount'] = Variable<int>(amount);
-    map['is_income'] = Variable<bool>(isIncome);
+    map['isIncome'] = Variable<bool>(isIncome);
     map['remarks'] = Variable<String>(remarks);
     map['category'] = Variable<int>(category);
     return map;
@@ -481,7 +480,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (id != null) 'id': id,
       if (date != null) 'date': date,
       if (amount != null) 'amount': amount,
-      if (isIncome != null) 'is_income': isIncome,
+      if (isIncome != null) 'isIncome': isIncome,
       if (remarks != null) 'remarks': remarks,
       if (category != null) 'category': category,
     });
@@ -517,7 +516,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       map['amount'] = Variable<int>(amount.value);
     }
     if (isIncome.present) {
-      map['is_income'] = Variable<bool>(isIncome.value);
+      map['isIncome'] = Variable<bool>(isIncome.value);
     }
     if (remarks.present) {
       map['remarks'] = Variable<String>(remarks.value);
@@ -544,8 +543,62 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  late final $CategoriesTable categories = $CategoriesTable(this);
-  late final $TransactionsTable transactions = $TransactionsTable(this);
+  late final Categories categories = Categories(this);
+  late final Transactions transactions = Transactions(this);
+  Selectable<int> getTransactionCount() {
+    return customSelect('SELECT COUNT(*) AS _c0 FROM transactions',
+        variables: [],
+        readsFrom: {
+          transactions,
+        }).map((QueryRow row) => row.read<int>('_c0'));
+  }
+
+  Future<int> insertTransaction(
+      {required DateTime date,
+      required int amount,
+      required bool isIncome,
+      required String remarks,
+      required String categoryName}) {
+    return customInsert(
+      'INSERT INTO transactions (date, amount, isIncome, remarks, category) VALUES (?1, ?2, ?3, ?4, (SELECT id FROM categories WHERE name == ?5))',
+      variables: [
+        Variable<DateTime>(date),
+        Variable<int>(amount),
+        Variable<bool>(isIncome),
+        Variable<String>(remarks),
+        Variable<String>(categoryName)
+      ],
+      updates: {transactions},
+    );
+  }
+
+  Selectable<Transaction> getTransactionsWithinDateRange(
+      {required DateTime startDate, required DateTime endDate}) {
+    return customSelect(
+        'SELECT * FROM transactions WHERE date >= ?1 AND date <= ?2',
+        variables: [
+          Variable<DateTime>(startDate),
+          Variable<DateTime>(endDate)
+        ],
+        readsFrom: {
+          transactions,
+        }).asyncMap(transactions.mapFromRow);
+  }
+
+  Selectable<Category> getCategories() {
+    return customSelect('SELECT * FROM categories', variables: [], readsFrom: {
+      categories,
+    }).asyncMap(categories.mapFromRow);
+  }
+
+  Future<int> insertCategory({required String name, required String iconName}) {
+    return customInsert(
+      'INSERT INTO categories (name, iconName) VALUES (?1, ?2)',
+      variables: [Variable<String>(name), Variable<String>(iconName)],
+      updates: {categories},
+    );
+  }
+
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

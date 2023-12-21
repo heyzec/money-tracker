@@ -19,78 +19,17 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   return database;
 });
 
-@DataClassName("Category")
-class Categories extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().unique()();
-  TextColumn get iconName => text()();
-}
-
-class Transactions extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  DateTimeColumn get date => dateTime()();
-  IntColumn get amount => integer()();
-  BoolColumn get isIncome => boolean()();
-  TextColumn get remarks => text()();
-  IntColumn get category => integer().references(Categories, #id)();
-}
-
-@DriftDatabase(tables: [Categories, Transactions])
+@DriftDatabase(
+  include: {
+    'categories.drift',
+    'transactions.drift',
+  },
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
-
-  Future<List<Category>> getCategories() async {
-    return await select(categories).get();
-  }
-
-  Future<int> insertCategory({
-    required String name,
-    required String iconName,
-  }) async {
-    return await into(categories).insert(
-      CategoriesCompanion(
-        name: Value(name),
-        iconName: Value(iconName),
-      ),
-    );
-  }
-
-  Future<int> getTransactionCount() async {
-    return (await select(transactions).get()).length;
-  }
-
-  Future<int> insertTransaction({
-    required DateTime date,
-    required int amount,
-    required bool isIncome,
-    required String remarks,
-    required String categoryName,
-  }) async {
-    Category category = await (select(categories)
-          ..where((c) => c.name.equals(categoryName)))
-        .getSingle();
-
-    var entry = TransactionsCompanion(
-      date: Value(date),
-      amount: Value(amount),
-      isIncome: Value(false), // TODO: Placeholder
-      remarks: Value("Hi"), // TODO: Placeholder
-      category: Value(category.id),
-    );
-    return await into(transactions).insert(entry);
-  }
-
-  Future<List<Transaction>> getTransactionsWithinDateRange({
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
-    var query = select(transactions);
-    query.where((t) => t.date.isBetweenValues(startDate, endDate));
-    return await query.get();
-  }
 }
 
 LazyDatabase _openConnection() {
