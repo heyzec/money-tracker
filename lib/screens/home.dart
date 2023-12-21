@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/widgets/sidebar.dart';
+import 'package:namer_app/widgets/visualisation/pie_visual.dart';
+import 'package:namer_app/widgets/visualisation/table.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,11 +38,6 @@ class _HomePageState extends State<HomePage> {
           title: const Text('Home'),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.comment),
-              tooltip: 'Comment Icon',
-              onPressed: () {},
-            ),
-            IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'Setting Icon',
               onPressed: () {
@@ -69,31 +68,87 @@ class _HomePageState extends State<HomePage> {
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),
-        body: Column(
-          children: [
-            Text("Period: $period"),
-            Text("start: $startDate"),
-            Text("end: $endDate"),
-            Placeholder(),
-            Text("Balances"),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        body: Padding(
+          padding: EdgeInsets.all(25.0),
+          child: Column(
+            children: [
+              ViewData(
+                startDate: DateTime(2000),
+                endDate: DateTime(2025),
+              ),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(16.0),
+                      child: HomeEntryButton(false),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(16.0),
+                      child: HomeEntryButton(true),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: HomeEntryButton(false),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: HomeEntryButton(true),
-                  ),
+                  Text("Debug Info"),
+                  Text("Period: $period"),
+                  Text("start: $startDate"),
+                  Text("end: $endDate"),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class ViewData extends StatelessWidget {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  ViewData({required this.startDate, required this.endDate});
+
+  Future<List<Transaction>> getFuture(context) {
+    var database = Provider.of<AppDatabase>(context);
+    return database.getTransactionsWithinDateRange(
+      startDate: startDate,
+      endDate: endDate,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getFuture(context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No items available.'));
+        }
+
+        var transactions = snapshot.data!;
+        return Expanded(
+          child: Column(
+            children: [
+              Text("Divider"),
+              Expanded(child: PieChartVisual(transactions)),
+              Text("Divider"),
+              Breakdown(transactions),
+              Text("Divider"),
+            ],
+          ),
+        );
+      },
     );
   }
 }

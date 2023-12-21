@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -67,10 +68,19 @@ class AppDatabase extends _$AppDatabase {
       date: Value(date),
       amount: Value(amount),
       isIncome: Value(false), // TODO: Placeholder
-      remarks: Value("Hi"),   // TODO: Placeholder
+      remarks: Value("Hi"), // TODO: Placeholder
       category: Value(category.id),
     );
     return await into(transactions).insert(entry);
+  }
+
+  Future<List<Transaction>> getTransactionsWithinDateRange({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    var query = select(transactions);
+    query.where((t) => t.date.isBetweenValues(startDate, endDate));
+    return await query.get();
   }
 }
 
@@ -83,7 +93,17 @@ LazyDatabase _openConnection() {
     try {
       dbFolder = await getApplicationDocumentsDirectory();
     } catch (MissingPlatformDirectoryException) {
-      dbFolder = Directory('/home/heyzec/Documents');
+      // Workaround to run app on linux (?)
+      if (!Platform.isLinux) {
+        print("Unable to find location to save database. Exiting.");
+        SystemNavigator.pop();
+      }
+      String? home = Platform.environment['HOME'];
+      if (home == null) {
+        print("Unable to get \$HOME. Exiting.");
+        SystemNavigator.pop();
+      }
+      dbFolder = Directory('$home/Documents');
     }
 
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
