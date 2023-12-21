@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/widgets/cards/selector_db.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
-import 'package:provider/provider.dart';
 
-class NumpadPage extends StatefulWidget {
+class NumpadPage extends ConsumerStatefulWidget {
   @override
-  State<NumpadPage> createState() => _NumpadPageState();
+  ConsumerState<NumpadPage> createState() => _NumpadPageState();
 }
 
 String dateTimeToString(DateTime dt) {
@@ -38,16 +38,15 @@ String dateTimeToString(DateTime dt) {
   return "${dayOfWeekLookup[dt.weekday]}, ${dt.day.toString().padLeft(2, '0')} ${monthLookup[dt.month]} ${dt.year.toString()}";
 }
 
-class _NumpadPageState extends State<NumpadPage> {
+class _NumpadPageState extends ConsumerState<NumpadPage> {
   NumpadLogic logic = NumpadLogic();
   bool showCategories = false;
   String display = "0";
   DateTime date = DateTime.now();
   String? selected;
 
-  void insertTransaction(BuildContext context) async {
+  void insertTransaction(AppDatabase database) async {
     var amount = logic.getValue();
-    var database = Provider.of<AppDatabase>(context, listen: false);
 
     await database.insertTransaction(
       date: date,
@@ -160,7 +159,7 @@ class _NumpadPageState extends State<NumpadPage> {
                               setState(() {
                                 selected = s;
                               });
-                              insertTransaction(context);
+                              insertTransaction(ref.read(databaseProvider));
                             })
                           : NumpadLayout(
                               logic: logic,

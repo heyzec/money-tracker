@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 import 'package:namer_app/widgets/visualisation/pie_visual.dart';
 import 'package:namer_app/widgets/visualisation/table.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -107,14 +109,13 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ViewData extends StatelessWidget {
+class ViewData extends ConsumerWidget {
   final DateTime startDate;
   final DateTime endDate;
 
   ViewData({required this.startDate, required this.endDate});
 
-  Future<List<Transaction>> getFuture(context) {
-    var database = Provider.of<AppDatabase>(context);
+  Future<List<Transaction>> getFuture(AppDatabase database) {
     return database.getTransactionsWithinDateRange(
       startDate: startDate,
       endDate: endDate,
@@ -122,9 +123,9 @@ class ViewData extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder(
-      future: getFuture(context),
+      future: getFuture(ref.read(databaseProvider)),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

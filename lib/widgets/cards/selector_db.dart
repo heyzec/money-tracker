@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/widgets/cards/card_selector.dart';
-import 'package:provider/provider.dart';
 
-class SelectorWithDbItems extends StatefulWidget {
+class SelectorWithDbItems extends ConsumerStatefulWidget {
   final Function(String) onSelectCallback;
 
   SelectorWithDbItems(this.onSelectCallback);
 
   @override
-  State<SelectorWithDbItems> createState() => _SelectorWithDbItemsState();
+  ConsumerState<SelectorWithDbItems> createState() =>
+      _SelectorWithDbItemsState();
 }
 
-class _SelectorWithDbItemsState extends State<SelectorWithDbItems> {
+class _SelectorWithDbItemsState extends ConsumerState<SelectorWithDbItems> {
   List<Category>? categories;
 
-  Future<List<Category>>? fetch(context) async {
+  Future<List<Category>>? fetch(AppDatabase database) async {
     if (categories != null) {
       return categories!;
     }
-    var database = Provider.of<AppDatabase>(context);
     var items = await database.getCategories();
     setState(() {
       categories = items;
@@ -30,7 +30,7 @@ class _SelectorWithDbItemsState extends State<SelectorWithDbItems> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetch(context),
+      future: fetch(ref.read(databaseProvider)),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

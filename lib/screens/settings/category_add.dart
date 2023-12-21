@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/widgets/cards/card_selector.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
-import 'package:provider/provider.dart';
 
-class CategoryAddPage extends StatefulWidget {
+class CategoryAddPage extends ConsumerStatefulWidget {
   final Function(Category) onSubmit;
 
   CategoryAddPage(this.onSubmit);
 
   @override
-  State<CategoryAddPage> createState() => _CategoryAddPageState();
+  ConsumerState<CategoryAddPage> createState() => _CategoryAddPageState();
 }
 
-class _CategoryAddPageState extends State<CategoryAddPage> {
+class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
   bool initalised = false;
   List<Category> allItems = [];
   final TextEditingController _controller = TextEditingController();
   CardInfo? selected;
 
-  void _onSubmit(context) async {
+  void _onSubmit(AppDatabase database) async {
     final enteredText = _controller.text;
     if (selected == null || enteredText == "") {
       print("Bad");
       return;
     }
 
-    var database = Provider.of<AppDatabase>(context, listen: false);
 
     String name = enteredText;
     String iconName = selected!.iconName;
@@ -62,7 +61,7 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
           actions: [
             IconButton(
               onPressed: () {
-                _onSubmit(context);
+                _onSubmit(ref.read(databaseProvider));
               },
               icon: Icon(Icons.done),
             ),
@@ -70,7 +69,7 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _onSubmit(context);
+            _onSubmit(ref.read(databaseProvider));
           },
           child: Icon(Icons.check),
         ),

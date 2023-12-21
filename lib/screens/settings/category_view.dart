@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/settings/category_add.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
-import 'package:provider/provider.dart';
 
-class CategoryViewPage extends StatefulWidget {
+class CategoryViewPage extends ConsumerStatefulWidget {
   @override
-  State<CategoryViewPage> createState() => _CategoryViewPageState();
+  ConsumerState<CategoryViewPage> createState() => _CategoryViewPageState();
 }
 
-class _CategoryViewPageState extends State<CategoryViewPage> {
+class _CategoryViewPageState extends ConsumerState<CategoryViewPage> {
   List<Category>? allItems;
 
-  Future<List<Category>>? fetch(context) async {
+  Future<List<Category>>? fetch(AppDatabase database) async {
     if (allItems != null) {
       return allItems!;
     }
-    var items = await fetchCategories(context);
+    var items = await fetchCategories(database);
     setState(() {
       allItems = items;
     });
@@ -53,7 +53,7 @@ class _CategoryViewPageState extends State<CategoryViewPage> {
           child: Icon(Icons.add),
         ),
         body: FutureBuilder<List<Category>>(
-          future: fetch(context),
+          future: fetch(ref.read(databaseProvider)),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -86,8 +86,7 @@ class _CategoryViewPageState extends State<CategoryViewPage> {
     );
   }
 
-  Future<List<Category>> fetchCategories(context) async {
-    var database = Provider.of<AppDatabase>(context);
+  Future<List<Category>> fetchCategories(database) async {
     return database.getCategories();
   }
 }
