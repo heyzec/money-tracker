@@ -60,6 +60,36 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     Navigator.pop(context);
   }
 
+  void onDatePressed() async {
+    DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: MIN_DATE,
+      lastDate: MAX_DATE,
+    );
+    if (newDate == null) {
+      return;
+    }
+    setState(() {
+      date = newDate;
+    });
+  }
+
+  void onCategorySelected(String categoryName) {
+    setState(() {
+      selected = categoryName;
+    });
+    insertTransaction(ref.read(databaseProvider));
+    ref.invalidate(transactionsProvider);
+  }
+
+  void onBackspacePressed() {
+    logic.handle('B');
+    setState(() {
+      display = logic.getBuffer();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -74,119 +104,96 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
           ),
           title: const Text('Key in'),
         ),
-        body: Column(
-          children: [
-            TextButton.icon(
-              onPressed: () async {
-                DateTime? newDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: MIN_DATE,
-                  lastDate: MAX_DATE,
-                );
-                if (newDate == null) {
-                  return;
-                }
-                setState(() {
-                  date = newDate;
-                });
-              },
-              icon: Icon(Icons.calendar_month),
-              label: Text(dateTimeToString(date)),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 200),
-              child: Card(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextButton.icon(
+                onPressed: onDatePressed,
+                icon: Icon(Icons.calendar_month),
+                label: Text(dateTimeToString(date)),
+              ),
+              Card(
                 color: Colors.lightGreen[200],
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                child: IntrinsicHeight(
+                  child: Stack(
                     children: [
-                      Text(display, textScaleFactor: 5),
-                      IconButton(
-                        icon: const Icon(Icons.backspace),
-                        tooltip: 'Backspace',
-                        onPressed: () {
-                          logic.handle('BS');
-                          setState(() {
-                            display = logic.getBuffer();
-                          });
-                        },
+                      Align(
+                        child: Text(display, textScaleFactor: 5),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: const Icon(Icons.backspace),
+                          tooltip: 'Backspace',
+                          onPressed: onBackspacePressed,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        const begin = Offset(0.0, 1.0);
-                        const end = Offset.zero;
-                        const curve = Curves.easeInOut;
+              Expanded(
+                flex: 4,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    const begin = Offset(0.0, 1.0);
+                    const end = Offset.zero;
+                    const curve = Curves.easeInOut;
 
-                        var slideTransition =
-                            Tween(begin: begin, end: end).animate(
-                          CurvedAnimation(parent: animation, curve: curve),
-                        );
+                    var slideTransition = Tween(begin: begin, end: end).animate(
+                      CurvedAnimation(parent: animation, curve: curve),
+                    );
 
-                        return Stack(
-                          children: [
-                            // // Outgoing widget with fade-out effect
-                            // FadeTransition(
-                            //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-                            //   child: child,
-                            // ),
-                            // Incoming widget sliding in from the bottom
-                            SlideTransition(
-                              position: slideTransition,
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      child: showCategories
-                          ? SelectorWithDbItems((String s) {
-                              setState(() {
-                                selected = s;
-                              });
-                              insertTransaction(ref.read(databaseProvider));
-                              ref.invalidate(transactionsProvider);
-                            })
-                          : NumpadLayout(
-                              logic: logic,
-                              onUpdate: (String newDisplay) {
-                                setState(() {
-                                  display = newDisplay;
-                                });
-                              },
-                            ),
-                    ),
-                  ),
-                  Expanded(
-                    child: OutlinedButton(
-                      child: Text("Select Category"),
-                      onPressed: () {
-                        setState(() {
-                          showCategories = !showCategories;
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                    return Stack(
+                      children: [
+                        // // Outgoing widget with fade-out effect
+                        // FadeTransition(
+                        //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+                        //   child: child,
+                        // ),
+                        // Incoming widget sliding in from the bottom
+                        SlideTransition(
+                          position: slideTransition,
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  child: showCategories
+                      ? SelectorWithDbItems(onCategorySelected)
+                      : NumpadLayout(
+                          logic: logic,
+                          onUpdate: (String newDisplay) {
+                            setState(() {
+                              display = newDisplay;
+                            });
+                          },
+                        ),
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 10),
+              Expanded(
+                flex: 1,
+                child: SizedBox(
+                  child: OutlinedButton(
+                    child: Text("Select Category"),
+                    onPressed: () {
+                      setState(() {
+                        showCategories = !showCategories;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

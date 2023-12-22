@@ -1,3 +1,23 @@
+const validCalculatorActions = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "0",
+  "+",
+  "-",
+  "x",
+  "/",
+  ".",
+  "=",
+  "B",
+];
+
 class NumpadLogic {
   String _buffer = "0";
   int? _register;
@@ -36,22 +56,28 @@ class NumpadLogic {
     return _parseToCents(_buffer);
   }
 
-  void handle(String ch) {
-    int? number = int.tryParse(ch);
-    if (ch == "." || number != null) {
+  void handle(String action) {
+    if (!validCalculatorActions.contains(action)) {
+      throw 'Invalid action $action';
+    }
+    int? number = int.tryParse(action);
+    if (action == "." || number != null) {
       if (_buffer.length >= 6) {
         return;
       }
-      if (_buffer == '0' && ch != '.') {
-        _buffer = ch;
+      if (_buffer == '0' && action != '.') {
+        _buffer = action;
         return;
       }
-      _buffer += ch;
-    } else if (ch == '+' || ch == '-' || ch == 'x' || ch == '/') {
+      _buffer += action;
+    } else if (action == '+' ||
+        action == '-' ||
+        action == 'x' ||
+        action == '/') {
       _register = _parseToCents(_buffer);
       _buffer = "";
-      _operation = ch;
-    } else if (ch == '=') {
+      _operation = action;
+    } else if (action == '=') {
       if (_operation == null) {
         return;
       }
@@ -77,7 +103,7 @@ class NumpadLogic {
       }
 
       _buffer = _formatFromCents(result);
-    } else if (ch == 'BS') {
+    } else if (action == 'B') {
       if (_buffer.length == 1) {
         _buffer = "0";
         return;
