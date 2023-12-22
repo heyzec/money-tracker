@@ -28,8 +28,14 @@ class Categories extends Table with TableInfo<Categories, Category> {
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  late final GeneratedColumn<int> color = GeneratedColumn<int>(
+      'color', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   @override
-  List<GeneratedColumn> get $columns => [id, name, iconName];
+  List<GeneratedColumn> get $columns => [id, name, iconName, color];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -55,6 +61,12 @@ class Categories extends Table with TableInfo<Categories, Category> {
     } else if (isInserting) {
       context.missing(_iconNameMeta);
     }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+    } else if (isInserting) {
+      context.missing(_colorMeta);
+    }
     return context;
   }
 
@@ -70,6 +82,8 @@ class Categories extends Table with TableInfo<Categories, Category> {
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       iconName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}iconName'])!,
+      color: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}color'])!,
     );
   }
 
@@ -86,14 +100,22 @@ class Category extends DataClass implements Insertable<Category> {
   final int id;
   final String name;
   final String iconName;
+
+  /// color    TEXT NOT NULL MAPPED BY `const ColorConverter()`
+  /// ColorConverter does not seem to work
+  final int color;
   const Category(
-      {required this.id, required this.name, required this.iconName});
+      {required this.id,
+      required this.name,
+      required this.iconName,
+      required this.color});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['iconName'] = Variable<String>(iconName);
+    map['color'] = Variable<int>(color);
     return map;
   }
 
@@ -102,6 +124,7 @@ class Category extends DataClass implements Insertable<Category> {
       id: Value(id),
       name: Value(name),
       iconName: Value(iconName),
+      color: Value(color),
     );
   }
 
@@ -112,6 +135,7 @@ class Category extends DataClass implements Insertable<Category> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       iconName: serializer.fromJson<String>(json['iconName']),
+      color: serializer.fromJson<int>(json['color']),
     );
   }
   @override
@@ -121,68 +145,83 @@ class Category extends DataClass implements Insertable<Category> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'iconName': serializer.toJson<String>(iconName),
+      'color': serializer.toJson<int>(color),
     };
   }
 
-  Category copyWith({int? id, String? name, String? iconName}) => Category(
+  Category copyWith({int? id, String? name, String? iconName, int? color}) =>
+      Category(
         id: id ?? this.id,
         name: name ?? this.name,
         iconName: iconName ?? this.iconName,
+        color: color ?? this.color,
       );
   @override
   String toString() {
     return (StringBuffer('Category(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('iconName: $iconName')
+          ..write('iconName: $iconName, ')
+          ..write('color: $color')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, iconName);
+  int get hashCode => Object.hash(id, name, iconName, color);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Category &&
           other.id == this.id &&
           other.name == this.name &&
-          other.iconName == this.iconName);
+          other.iconName == this.iconName &&
+          other.color == this.color);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> iconName;
+  final Value<int> color;
   const CategoriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.iconName = const Value.absent(),
+    this.color = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String iconName,
+    required int color,
   })  : name = Value(name),
-        iconName = Value(iconName);
+        iconName = Value(iconName),
+        color = Value(color);
   static Insertable<Category> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? iconName,
+    Expression<int>? color,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (iconName != null) 'iconName': iconName,
+      if (color != null) 'color': color,
     });
   }
 
   CategoriesCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<String>? iconName}) {
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? iconName,
+      Value<int>? color}) {
     return CategoriesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       iconName: iconName ?? this.iconName,
+      color: color ?? this.color,
     );
   }
 
@@ -198,6 +237,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (iconName.present) {
       map['iconName'] = Variable<String>(iconName.value);
     }
+    if (color.present) {
+      map['color'] = Variable<int>(color.value);
+    }
     return map;
   }
 
@@ -206,7 +248,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     return (StringBuffer('CategoriesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('iconName: $iconName')
+          ..write('iconName: $iconName, ')
+          ..write('color: $color')
           ..write(')'))
         .toString();
   }
@@ -591,10 +634,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     }).asyncMap(categories.mapFromRow);
   }
 
-  Future<int> insertCategory({required String name, required String iconName}) {
+  Future<int> insertCategory(
+      {required String name, required String iconName, required int color}) {
     return customInsert(
-      'INSERT INTO categories (name, iconName) VALUES (?1, ?2)',
-      variables: [Variable<String>(name), Variable<String>(iconName)],
+      'INSERT INTO categories (name, iconName, color) VALUES (?1, ?2, ?3)',
+      variables: [
+        Variable<String>(name),
+        Variable<String>(iconName),
+        Variable<int>(color)
+      ],
       updates: {categories},
     );
   }

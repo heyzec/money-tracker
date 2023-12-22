@@ -1,0 +1,17 @@
+-- import '../utils/color_converter.dart';
+
+CREATE TABLE categories (
+    id       INT  NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name     TEXT NOT NULL UNIQUE,
+    iconName TEXT NOT NULL,
+    -- ColorConverter does not seem to work
+    -- color    TEXT NOT NULL MAPPED BY `const ColorConverter()`
+    color INT NOT NULL
+) AS Category;
+
+getCategories:
+    SELECT * FROM categories;
+
+insertCategory:
+    INSERT INTO categories (name, iconName, color)
+    VALUES (:name, :iconName, :color);

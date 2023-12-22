@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-
-Color darken(color) {
-  return Color.lerp(color, Colors.black, 0.4)!;
-}
+import 'package:namer_app/utils/functions.dart';
 
 var ALL = [
   'taxi',
@@ -15,37 +12,25 @@ var ALL = [
   'cocktail',
 ];
 
-Color iconNametoColor(String iconName) {
-  // var colors = {
-  //   'taxi': Colors.yellow,
-  //   'train': Colors.yellow,
-  //   'camera': Colors.yellow,
-  //   'glasses': Colors.yellow,
-  //   'gamepad': Colors.yellow,
-  //   'home': Colors.yellow,
-  //   'cocktail': Colors.yellow,
-  // };
-  Color color = Color(iconName.hashCode);
-  color = HSLColor.fromColor(color).withSaturation(1).toColor();
-  return darken(color);
-}
-
 class CategoryCard extends StatelessWidget {
   final String iconName;
   final String? text;
+  final Color color;
+
   final VoidCallback? onPressed;
   final bool marked;
 
   CategoryCard({
     required this.iconName,
     this.text,
+    required this.color,
     this.onPressed,
     this.marked = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color color = iconNametoColor(iconName);
+    // Color color = iconNametoColor(iconName);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onPressed,

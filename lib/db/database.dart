@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
+import 'package:namer_app/db/utils/seeds.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,8 +22,8 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 
 @DriftDatabase(
   include: {
-    'categories.drift',
-    'transactions.drift',
+    'tables/categories.drift',
+    'tables/transactions.drift',
   },
 )
 class AppDatabase extends _$AppDatabase {
@@ -30,6 +31,16 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (m) async {
+        await m.createAll();
+        seedCategories(this);
+      },
+    );
+  }
 }
 
 LazyDatabase _openConnection() {

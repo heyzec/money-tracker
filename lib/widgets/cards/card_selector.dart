@@ -4,8 +4,9 @@ import 'package:namer_app/widgets/cards/category_card.dart';
 class CardInfo {
   String? text;
   String iconName;
+  Color color;
 
-  CardInfo({this.text, required this.iconName});
+  CardInfo({this.text, required this.iconName, required this.color});
 
   bool equals(other) {
     return text == other.text && iconName == other.iconName;
@@ -36,6 +37,7 @@ class _CardSelectorState extends State<CardSelector> {
           (cardInfo) => CategoryCard(
             iconName: cardInfo.iconName,
             text: cardInfo.text,
+            color: cardInfo.color,
             onPressed: () {
               setState(() {
                 selected = cardInfo;

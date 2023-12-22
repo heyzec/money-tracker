@@ -48,6 +48,7 @@ class _SelectorWithDbItemsState extends ConsumerState<SelectorWithDbItems> {
                 (category) => CardInfo(
                   iconName: category.iconName,
                   text: category.name,
+                  color: Color(category.color),
                 ),
               )
               .toList(),

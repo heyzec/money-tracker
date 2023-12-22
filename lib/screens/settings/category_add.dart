@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/functions.dart';
 import 'package:namer_app/widgets/cards/card_selector.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
 
@@ -26,19 +27,21 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
       return;
     }
 
-
     String name = enteredText;
     String iconName = selected!.iconName;
+    Color color = selected!.color;
 
     int id = await database.insertCategory(
       name: name,
       iconName: iconName,
+      color: color.value,
     );
     widget.onSubmit(
       Category(
         id: id,
         name: name,
         iconName: iconName,
+        color: color.value,
       ),
     );
 
@@ -89,7 +92,12 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
               ),
               CardSelector(
                 categories: ALL
-                    .map((category) => CardInfo(iconName: category))
+                    .map(
+                      (category) => CardInfo(
+                        iconName: category,
+                        color: iconNametoColor(category),
+                      ),
+                    )
                     .toList(),
                 onSelectCallback: (CardInfo card) {
                   setState(() {

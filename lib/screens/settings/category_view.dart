@@ -104,6 +104,7 @@ class CardsContainer extends StatelessWidget {
         (category) => CategoryCard(
           text: category.name,
           iconName: category.iconName,
+          color: Color(category.color),
         ),
       ),
     );
