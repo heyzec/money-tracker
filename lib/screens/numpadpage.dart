@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/cards/selector_db.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
@@ -160,6 +161,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                                 selected = s;
                               });
                               insertTransaction(ref.read(databaseProvider));
+                              ref.invalidate(transactionsProvider);
                             })
                           : NumpadLayout(
                               logic: logic,

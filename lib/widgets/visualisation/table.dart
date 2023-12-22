@@ -1,46 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
-import 'package:namer_app/widgets/visualisation/helpers.dart';
+import 'package:namer_app/utils/providers.dart';
 
-class Breakdown extends StatefulWidget {
-  final List<Transaction> data;
+class Breakdown extends ConsumerStatefulWidget {
+  final Map<Category, List<Transaction>> data;
 
   Breakdown(this.data);
 
   @override
-  State<Breakdown> createState() => _BreakdownState();
+  ConsumerState<Breakdown> createState() => _BreakdownState();
 }
 
-class _BreakdownState extends State<Breakdown> {
-  late final Map<int, List<Transaction>> grouped;
+class _BreakdownState extends ConsumerState<Breakdown> {
+  late Map<Category, List<Transaction>> grouped;
   late List<bool> expansionStates;
 
-  @override
-  void initState() {
-    grouped = groupTransactions(widget.data);
-
+  void updateState() {
+    grouped = widget.data;
     expansionStates = [for (int i = 0; i < grouped.length; i++) false];
-
-    super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    updateState();
+  }
+
+  @override
+  void didUpdateWidget(Breakdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    updateState();
+  }
+
+  List<ExpansionPanel> buildPanels(List<Category> categories) {
     List<ExpansionPanel> panels = [];
     int i = 0;
     for (var entry in grouped.entries) {
       int index = i;
       List<Transaction> transactions = entry.value;
-      int categoryId = entry.key;
+      int categoryId = entry.key.id;
       double total =
           transactions.map((t) => t.amount).reduce((a, b) => a + b) / 100;
+
+      String categoryName =
+          categories.firstWhere((c) => c.id == categoryId).name;
 
       panels.add(
         // Look into https://api.flutter.dev/flutter/material/ExpansionTile-class.html instead
         ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
-              title: Text('Category $categoryId - $total'),
+              title: Text('Category $categoryName - $total'),
             );
           },
           isExpanded: expansionStates[index],
@@ -60,14 +71,26 @@ class _BreakdownState extends State<Breakdown> {
       );
       i++;
     }
+    return panels;
+  }
 
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          expansionStates[index] = isExpanded;
-        });
+  @override
+  Widget build(BuildContext context) {
+    var categories = ref.watch(categoriesProvider);
+
+    return categories.when(
+      data: (categories) {
+        return ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              expansionStates[index] = isExpanded;
+            });
+          },
+          children: buildPanels(categories),
+        );
       },
-      children: panels,
+      loading: () => Text("Loading"),
+      error: (_, __) => Text("Error"),
     );
   }
 }

@@ -5,13 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
+import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 import 'package:namer_app/widgets/visualisation/pie_visual.dart';
 import 'package:namer_app/widgets/visualisation/table.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
 enum Period {
@@ -23,7 +24,7 @@ enum Period {
   all,
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   Period period = Period.day;
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
@@ -31,8 +32,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return MaterialApp(
       home: Scaffold(
         key: _scaffoldKey,
@@ -63,7 +62,10 @@ class _HomePageState extends State<HomePage> {
               startDate = date;
               endDate = date;
             }
-
+            Query newQuery = ref.read(queryProvider);
+            newQuery.startDate = DateTime(2020);
+            newQuery.endDate = DateTime(2025);
+            ref.read(queryProvider.notifier).state = newQuery;
             setState(() {
               period = newPeriod;
             });
@@ -126,20 +128,10 @@ class ViewData extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder(
-      future: getFuture(ref.read(databaseProvider)),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No items available.'));
-        }
-
-        var transactions = snapshot.data!;
+    var transactions = ref.watch(transactionsProvider);
+    return transactions.when(
+      data: (t) {
+        var transactions = t;
         return Expanded(
           child: Column(
             children: [
@@ -152,6 +144,8 @@ class ViewData extends ConsumerWidget {
           ),
         );
       },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, __) => Text('Error: $error'),
     );
   }
 }

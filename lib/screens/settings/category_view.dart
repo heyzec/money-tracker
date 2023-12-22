@@ -2,29 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/settings/category_add.dart';
+import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
 
-class CategoryViewPage extends ConsumerStatefulWidget {
+class CategoryViewPage extends ConsumerWidget {
   @override
-  ConsumerState<CategoryViewPage> createState() => _CategoryViewPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    var categories = ref.watch(categoriesProvider);
 
-class _CategoryViewPageState extends ConsumerState<CategoryViewPage> {
-  List<Category>? allItems;
-
-  Future<List<Category>>? fetch(AppDatabase database) async {
-    if (allItems != null) {
-      return allItems!;
-    }
-    var items = await fetchCategories(database);
-    setState(() {
-      allItems = items;
-    });
-    return items;
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -43,44 +28,26 @@ class _CategoryViewPageState extends ConsumerState<CategoryViewPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => CategoryAddPage((Category item) {
-                  setState(() {
-                    allItems?.add(item);
-                  });
+                  ref.invalidate(categoriesProvider);
                 }),
               ),
             );
           },
           child: Icon(Icons.add),
         ),
-        body: FutureBuilder<List<Category>>(
-          future: fetch(ref.read(databaseProvider)),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No items available.'));
-            }
-            var items = snapshot.data!;
-
-            return Column(
-              children: [
-                Expanded(
-                  child: CardsContainer(
-                    categories: items,
-                    onSubmit: (Category item) {
-                      setState(() {
-                        items.add(item);
-                      });
-                    },
-                  ),
+        body: categories.when(
+          data: (data) => Column(
+            children: [
+              Expanded(
+                child: CardsContainer(
+                  categories: data,
+                  onSubmit: (Category item) {},
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
+          loading: () => Center(child: CircularProgressIndicator()),
+          error: (error, _) => Center(child: Text('Error: $error')),
         ),
       ),
     );
@@ -93,7 +60,7 @@ class _CategoryViewPageState extends ConsumerState<CategoryViewPage> {
 
 class CardsContainer extends StatelessWidget {
   final List<Category> categories;
-  final Function(Category) onSubmit;
+  final Function(Category) onSubmit; // Unused
 
   CardsContainer({required this.categories, required this.onSubmit});
 
