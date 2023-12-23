@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 
 class Breakdown extends ConsumerStatefulWidget {
@@ -33,45 +35,79 @@ class _BreakdownState extends ConsumerState<Breakdown> {
     updateState();
   }
 
-  List<ExpansionPanel> buildPanels(List<Category> categories) {
-    List<ExpansionPanel> panels = [];
-    int i = 0;
-    for (var entry in grouped.entries) {
-      int index = i;
-      List<Transaction> transactions = entry.value;
-      int categoryId = entry.key.id;
-      double total =
-          transactions.map((t) => t.amount).reduce((a, b) => a + b) / 100;
+  ExpansionTile buildPanel(Category category, List<Transaction> transactions) {
+    double total =
+        transactions.map((t) => t.amount).reduce((a, b) => a + b) / 100;
+    Color categoryColor = Color(category.color);
 
-      String categoryName =
-          categories.firstWhere((c) => c.id == categoryId).name;
-
-      panels.add(
-        // Look into https://api.flutter.dev/flutter/material/ExpansionTile-class.html instead
-        ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text('Category $categoryName - $total'),
-            );
-          },
-          isExpanded: expansionStates[index],
-          // controlAffinity: ListTileControlAffinity.leading,
-
-          body: Column(
-            children: transactions
-                .map(
-                  (t) => ListTile(
-                    title:
-                        Text('\$${t.amount / 100} - ${t.remarks} - ${t.date}'),
+    return ExpansionTile(
+      controlAffinity: ListTileControlAffinity.leading,
+      title: Stack(
+        children: [
+          Row(
+            children: [
+              Icon(
+                LineIcons.byName(category.iconName),
+                color: categoryColor,
+              ),
+              SizedBox(width: 5),
+              Text(
+                category.name,
+                style: TextStyle(color: categoryColor),
+              ),
+              SizedBox(width: 5),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                  child: Text(
+                    transactions.length.toString(),
+                    textScaleFactor: 0.8,
+                    style: TextStyle(color: Colors.white),
                   ),
-                )
-                .toList(),
+                ),
+              ),
+            ],
           ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '\$$total',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
+      ),
+      children: [
+        Column(
+          children: transactions
+              .map(
+                (t) => ListTile(
+                  title: Stack(
+                    children: [
+                      Text(
+                        '\$${t.amount / 100} - ${t.remarks}',
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          dateTimeToStringShort(t.date),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
         ),
-      );
-      i++;
-    }
-    return panels;
+      ],
+    );
   }
 
   @override
@@ -80,13 +116,18 @@ class _BreakdownState extends ConsumerState<Breakdown> {
 
     return categories.when(
       data: (categories) {
-        return ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              expansionStates[index] = isExpanded;
-            });
-          },
-          children: buildPanels(categories),
+        return ListView(
+          children: () {
+            List<ExpansionTile> panels = [];
+            for (var entry in grouped.entries) {
+              List<Transaction> transactions = entry.value;
+              Category category =
+                  categories.firstWhere((c) => c.id == entry.key.id);
+
+              panels.add(buildPanel(category, transactions));
+            }
+            return panels;
+          }(),
         );
       },
       loading: () => Text("Loading"),

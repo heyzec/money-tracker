@@ -1,14 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/db/database.dart';
+import 'package:namer_app/screens/home/home_data.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/sidebar.dart';
-import 'package:namer_app/widgets/visualisation/pie_visual.dart';
-import 'package:namer_app/widgets/visualisation/table.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   @override
@@ -111,45 +107,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-class ViewData extends ConsumerWidget {
-  final DateTime startDate;
-  final DateTime endDate;
-
-  ViewData({required this.startDate, required this.endDate});
-
-  Future<List<Transaction>> getFuture(AppDatabase database) {
-    return database
-        .getTransactionsWithinDateRange(
-          startDate: startDate,
-          endDate: endDate,
-        )
-        .get();
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var transactions = ref.watch(transactionsProvider);
-    return transactions.when(
-      data: (t) {
-        var transactions = t;
-        return Expanded(
-          child: Column(
-            children: [
-              Text("Divider"),
-              Expanded(child: PieChartVisual(transactions)),
-              Text("Divider"),
-              Breakdown(transactions),
-              Text("Divider"),
-            ],
-          ),
-        );
-      },
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (error, __) => Text('Error: $error'),
-    );
-  }
-}
-
 class HomeEntryButton extends StatelessWidget {
   final bool isIncome;
 
@@ -157,22 +114,28 @@ class HomeEntryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color = isIncome ? Colors.green : Colors.red;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: CircleBorder(),
         padding: EdgeInsets.all(30),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.red,
+        backgroundColor: Colors.white,
+        foregroundColor: color,
+        side: BorderSide(color: color),
       ),
       child: Icon(
         (isIncome ? Icons.add : Icons.remove),
         size: 40,
-        color: Colors.white,
+        color: color,
       ),
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NumpadPage()),
+          MaterialPageRoute(
+            builder: (context) => NumpadPage(
+              isIncome: isIncome,
+            ),
+          ),
         );
       },
     );

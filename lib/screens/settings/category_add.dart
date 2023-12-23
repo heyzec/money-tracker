@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/functions.dart';
+import 'package:namer_app/utils/colors.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/cards/card_selector.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';

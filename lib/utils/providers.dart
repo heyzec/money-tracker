@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
-import 'package:namer_app/widgets/visualisation/helpers.dart';
+import 'package:namer_app/utils/helpers.dart';
 
 class Query {
   DateTime startDate;

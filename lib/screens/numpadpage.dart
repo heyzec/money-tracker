@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/cards/selector_db.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
@@ -8,35 +9,12 @@ import 'package:namer_app/widgets/numpad/logic.dart';
 import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
 
 class NumpadPage extends ConsumerStatefulWidget {
+  final bool isIncome;
+
+  NumpadPage({required this.isIncome});
+
   @override
   ConsumerState<NumpadPage> createState() => _NumpadPageState();
-}
-
-String dateTimeToString(DateTime dt) {
-  var dayOfWeekLookup = {
-    1: "Mon",
-    2: "Tue",
-    3: "Wed",
-    4: "Thu",
-    5: "Fri",
-    6: "Sat",
-    7: "Sun",
-  };
-  var monthLookup = {
-    1: "Jan",
-    2: "Feb",
-    3: "Mar",
-    4: "Apr",
-    5: "May",
-    6: "June",
-    7: "Jul",
-    8: "Aug",
-    9: "Sep",
-    10: "Oct",
-    11: "Nov",
-    12: "Dec",
-  };
-  return "${dayOfWeekLookup[dt.weekday]}, ${dt.day.toString().padLeft(2, '0')} ${monthLookup[dt.month]} ${dt.year.toString()}";
 }
 
 class _NumpadPageState extends ConsumerState<NumpadPage> {
@@ -45,6 +23,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
   String display = "0";
   DateTime date = DateTime.now();
   String? selected;
+  final TextEditingController _controller = TextEditingController();
 
   void insertTransaction(AppDatabase database) async {
     var amount = logic.getValue();
@@ -52,8 +31,8 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     await database.insertTransaction(
       date: date,
       amount: amount,
-      isIncome: false,
-      remarks: "Hi",
+      isIncome: widget.isIncome,
+      remarks: _controller.text,
       categoryName: selected!,
     );
 
@@ -102,7 +81,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
               Navigator.pop(context);
             },
           ),
-          title: const Text('Key in'),
+          title: Text(widget.isIncome ? "New income" : "New expense"),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -112,7 +91,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
               TextButton.icon(
                 onPressed: onDatePressed,
                 icon: Icon(Icons.calendar_month),
-                label: Text(dateTimeToString(date)),
+                label: Text(dateTimeToStringLong(date)),
               ),
               Card(
                 color: Colors.lightGreen[200],
@@ -133,6 +112,10 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                     ],
                   ),
                 ),
+              ),
+              TextFormField(
+                controller: _controller,
+                decoration: InputDecoration(labelText: 'Note'),
               ),
               Expanded(
                 flex: 4,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:namer_app/utils/functions.dart';
+import 'package:namer_app/utils/colors.dart';
 
 var ALL = [
   'taxi',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/home.dart' show Period;
+import 'package:namer_app/screens/home/home.dart' show Period;
 
 // ignore: non_constant_identifier_names
 final MIN_DATE = DateTime(2000);

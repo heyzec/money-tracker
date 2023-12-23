@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 
-import 'screens/home.dart';
+import 'screens/home/home.dart';
 
 void main() async {
   runApp(
