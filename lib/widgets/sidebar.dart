@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/home/home.dart' show Period;
-
-// ignore: non_constant_identifier_names
-final MIN_DATE = DateTime(2000);
-// ignore: non_constant_identifier_names
-final MAX_DATE = DateTime(2050);
+import 'package:namer_app/utils/dates.dart';
 
 class Sidebar extends StatelessWidget {
   final Period selected;

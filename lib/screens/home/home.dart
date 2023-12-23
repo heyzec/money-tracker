@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/screens/home/home_data.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
-import 'package:namer_app/utils/providers.dart';
+import 'package:namer_app/utils/dates.dart';
+import 'package:namer_app/utils/query_provider.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -11,23 +12,13 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-enum Period {
-  day,
-  week,
-  month,
-  year,
-  interval,
-  all,
-}
-
 class _HomePageState extends ConsumerState<HomePage> {
-  Period period = Period.day;
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
+    Query query = ref.watch(queryProvider);
+
     return MaterialApp(
       home: Scaffold(
         key: _scaffoldKey,
@@ -48,23 +39,11 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         drawer: Padding(
           padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
-          child: Sidebar(period, (Period newPeriod, [dynamic dates]) {
-            if (newPeriod == Period.interval) {
-              DateTimeRange dateRange = dates as DateTimeRange;
-              startDate = dateRange.start;
-              endDate = dateRange.end;
-            } else if (dates != null) {
-              DateTime date = dates as DateTime;
-              startDate = date;
-              endDate = date;
-            }
-            Query newQuery = ref.read(queryProvider);
-            newQuery.startDate = DateTime(2020);
-            newQuery.endDate = DateTime(2025);
-            ref.read(queryProvider.notifier).state = newQuery;
-            setState(() {
-              period = newPeriod;
-            });
+          child: Sidebar(query.period, (
+            Period newPeriod, [
+            dynamic dates,
+          ]) {
+            ref.read(queryProvider.notifier).changePeriod(newPeriod, dates);
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),
@@ -94,9 +73,25 @@ class _HomePageState extends ConsumerState<HomePage> {
               Column(
                 children: [
                   Text("Debug Info"),
-                  Text("Period: $period"),
-                  Text("start: $startDate"),
-                  Text("end: $endDate"),
+                  Text("Period: ${query.period}"),
+                  Text("start: ${query.getDateRange().start}"),
+                  Text("end: ${query.getDateRange().end}"),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          ref.read(queryProvider.notifier).decrement();
+                        },
+                        icon: Icon(Icons.arrow_left),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          ref.read(queryProvider.notifier).increment();
+                        },
+                        icon: Icon(Icons.arrow_right),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],

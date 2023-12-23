@@ -6,7 +6,6 @@ import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/widgets/cards/selector_db.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
-import 'package:namer_app/widgets/sidebar.dart' show MIN_DATE, MAX_DATE;
 
 class NumpadPage extends ConsumerStatefulWidget {
   final bool isIncome;

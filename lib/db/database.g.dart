@@ -618,7 +618,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   Selectable<Transaction> getTransactionsWithinDateRange(
       {required DateTime startDate, required DateTime endDate}) {
     return customSelect(
-        'SELECT * FROM transactions WHERE date >= ?1 AND date <= ?2',
+        'SELECT * FROM transactions WHERE date >= ?1 AND date < ?2',
         variables: [
           Variable<DateTime>(startDate),
           Variable<DateTime>(endDate)

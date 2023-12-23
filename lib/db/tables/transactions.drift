@@ -28,4 +28,4 @@ insertTransaction:
 getTransactionsWithinDateRange:
     SELECT * FROM transactions
     WHERE date >= :startDate
-        AND date <= :endDate;
+        AND date < :endDate;

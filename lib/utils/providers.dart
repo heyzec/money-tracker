@@ -1,13 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/helpers.dart';
-
-class Query {
-  DateTime startDate;
-  DateTime endDate;
-
-  Query({required this.startDate, required this.endDate});
-}
+import 'package:namer_app/utils/query_provider.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   AppDatabase database = AppDatabase();
@@ -22,15 +16,6 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
   return database.getCategories().get();
 });
 
-final queryProvider = StateProvider<Query>((ref) {
-  return Query(
-    // startDate: DateTime.now(),
-    // endDate: DateTime.now(),
-    startDate: DateTime(2020),
-    endDate: DateTime(2025),
-  );
-});
-
 final transactionsProvider =
     FutureProvider<Map<Category, List<Transaction>>>((ref) async {
   AppDatabase database = ref.read(databaseProvider);
@@ -39,8 +24,8 @@ final transactionsProvider =
   Query query = ref.watch(queryProvider);
   var transactions = await database
       .getTransactionsWithinDateRange(
-        startDate: query.startDate,
-        endDate: query.endDate,
+        startDate: query.getDateRange().start,
+        endDate: query.getDateRange().end,
       )
       .get();
 
