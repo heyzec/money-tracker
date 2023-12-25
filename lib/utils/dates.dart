@@ -1,24 +1,6 @@
 final appMinDate = DateTime(2000);
 final appMaxDate = DateTime(2050);
 
-enum Period {
-  day(0),
-  week(1),
-  month(2),
-  year(3),
-  all(4),
-  interval(-1);
-
-  const Period(this.value);
-
-  final int value;
-
-  bool isSmallerThan(Period other) {
-    assert(this != Period.interval && other != Period.interval);
-    return value < other.value;
-  }
-}
-
 var dayOfWeekLookup = {
   1: "Mon",
   2: "Tue",
@@ -52,6 +34,91 @@ String dateTimeToStringLong(DateTime dt) {
   return "${dayOfWeekLookup[dt.weekday]}, ${dt.day.toString().padLeft(2, '0')} ${monthLookup[dt.month]} ${dt.year.toString()}";
 }
 
+class Period {
+  final int value;
+  final Duration? duration;
+
+  const Period(this.value, this.duration);
+
+  static const day = Period(0, Duration(days: 1));
+  static const week = Period(1, Duration(days: 7));
+  static const month = Period(2, null);
+  static const year = Period(3, null);
+  static const all = Period(4, null);
+
+  static const _customPeriodValue = 5;
+
+  @override
+  bool operator ==(other) {
+    return other is Period && other.value == value;
+  }
+
+  @override
+  int get hashCode => value + duration.hashCode;
+
+  static Period custom({required int days}) {
+    return Period(_customPeriodValue, Duration(days: days));
+  }
+
+  bool isCustom() {
+    return value == _customPeriodValue;
+  }
+
+  @override
+  String toString() {
+    switch (this) {
+      case Period.day:
+        return "Period.day";
+      case Period.week:
+        return "Period.week";
+      case Period.month:
+        return "Period.month";
+      case Period.year:
+        return "Period.year";
+      case Period.year:
+        return "Period.year";
+      default:
+        assert(isCustom());
+        return "Period.custom(days: ${duration!.inDays})";
+    }
+  }
+
+  DateTime coerceDate(DateTime date) {
+    switch (this) {
+      case Period.day:
+        return coerceToDay(date);
+      case Period.week:
+        return coerceToWeek(date);
+      case Period.month:
+        return coerceToMonth(date);
+      case Period.year:
+        return coerceToYear(date);
+      default:
+        if (isCustom()) {
+          // Does not make sense to coerce intervals
+          return date;
+        }
+        assert(false);
+        return date;
+    }
+  }
+
+  DateTime incrementDate(DateTime date, [int amount = 1]) {
+    if (duration != null) {
+      return date.add(duration! * amount);
+    }
+    switch (this) {
+      case Period.month:
+        return incrementMonth(date, amount);
+      case Period.year:
+        return incrementYear(date, amount);
+      default:
+        assert(false);
+        return date;
+    }
+  }
+}
+
 DateTime coerceToYear(DateTime date) {
   return coerceToDay(date.copyWith(day: 1, month: 1));
 }
@@ -73,19 +140,6 @@ DateTime coerceToDay(DateTime date) {
     minute: 0,
     hour: 0,
   );
-}
-
-DateTime coerceByPeriod(DateTime date, Period period) {
-  switch (period) {
-    case Period.week:
-      return coerceToWeek(date);
-    case Period.month:
-      return coerceToMonth(date);
-    case Period.year:
-      return coerceToYear(date);
-    default:
-      return date;
-  }
 }
 
 DateTime incrementYear(DateTime date, [int amount = 1]) {
@@ -122,36 +176,4 @@ DateTime incrementDay(DateTime date, [int amount = 1]) {
 
 DateTime decrementDay(DateTime date, [int amount = 1]) {
   return incrementDay(date, -amount);
-}
-
-DateTime incrementByPeriod(DateTime date, Period period, [int amount = 1]) {
-  assert(period != Period.all && period != Period.interval);
-  switch (period) {
-    case Period.day:
-      return incrementDay(date, amount);
-    case Period.week:
-      return incrementWeek(date, amount);
-    case Period.month:
-      return incrementMonth(date, amount);
-    case Period.year:
-      return incrementYear(date, amount);
-    default:
-      return date;
-  }
-}
-
-DateTime decrementByPeriod(DateTime date, Period period) {
-  assert(period != Period.all && period != Period.interval);
-  switch (period) {
-    case Period.day:
-      return decrementDay(date);
-    case Period.week:
-      return decrementWeek(date);
-    case Period.month:
-      return decrementMonth(date);
-    case Period.year:
-      return decrementYear(date);
-    default:
-      return date;
-  }
 }

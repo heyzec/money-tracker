@@ -3,7 +3,7 @@ import 'package:namer_app/utils/dates.dart';
 
 class Sidebar extends StatelessWidget {
   final Period selected;
-  final Function(Period, [dynamic dates]) callback;
+  final Function(Period, [DateTime? dates]) callback;
 
   Sidebar(this.selected, this.callback);
 
@@ -30,14 +30,20 @@ class Sidebar extends StatelessWidget {
           ListTile(
             title: SidebarButton(
               text: "Interval",
-              isFilled: selected == Period.interval,
+              isFilled: selected.isCustom(),
               onPressed: () async {
                 DateTimeRange? dateRange = await showDateRangePicker(
                   context: context,
                   firstDate: appMinDate,
                   lastDate: appMaxDate,
                 );
-                callback(Period.interval, dateRange);
+                if (dateRange == null) {
+                  return;
+                }
+                callback(
+                  Period.custom(days: dateRange.duration.inDays),
+                  dateRange.start,
+                );
               },
             ),
           ),
@@ -52,6 +58,9 @@ class Sidebar extends StatelessWidget {
                   firstDate: appMinDate,
                   lastDate: appMaxDate,
                 );
+                if (date == null) {
+                  return;
+                }
                 callback(Period.day, date);
               },
             ),

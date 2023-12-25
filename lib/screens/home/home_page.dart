@@ -42,11 +42,11 @@ class _HomePageState extends ConsumerState<HomePage> {
           padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
           child: Sidebar(query.period, (
             Period newPeriod, [
-            dynamic dates,
+            DateTime? date,
           ]) {
             ref
                 .read(queryPrecursorProvider.notifier)
-                .changePeriod(newPeriod, dates);
+                .changePeriod(newPeriod, date);
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),

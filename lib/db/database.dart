@@ -42,7 +42,7 @@ LazyDatabase _openConnection() {
     Directory dbFolder;
     try {
       dbFolder = await getApplicationDocumentsDirectory();
-    } catch (MissingPlatformDirectoryException) {
+    } on MissingPlatformDirectoryException catch (_) {
       // Workaround to run app on linux (?)
       if (!Platform.isLinux) {
         print("Unable to find location to save database. Exiting.");
