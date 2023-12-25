@@ -11,3 +11,14 @@ Map<Category, List<Transaction>> groupTransactions(
           transactions.where((t) => t.category == category).toList(),
   };
 }
+
+double snapToValue(double value, double snapPoint1, double snapPoint2) {
+  double distanceToSnapPoint1 = (value - snapPoint1).abs();
+  double distanceToSnapPoint2 = (value - snapPoint2).abs();
+
+  if (distanceToSnapPoint1 < distanceToSnapPoint2) {
+    return snapPoint1;
+  } else {
+    return snapPoint2;
+  }
+}

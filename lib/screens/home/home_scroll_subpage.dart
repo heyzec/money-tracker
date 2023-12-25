@@ -4,6 +4,7 @@ import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/query_provider.dart';
 import 'package:namer_app/utils/types.dart';
+import 'package:namer_app/widgets/draggable_drawer.dart';
 import 'package:namer_app/widgets/visualisation/pie_visual.dart';
 import 'package:namer_app/widgets/visualisation/table.dart';
 
@@ -34,6 +35,7 @@ class HomeScrollSubpage extends ConsumerWidget {
     return transactions.when(
       data: (t) {
         var transactions = t;
+        return DraggableDrawer();
         return Column(
           children: [
             Text("Total: ${sum(transactions) / 100}"),
