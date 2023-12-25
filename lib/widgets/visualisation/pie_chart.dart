@@ -2,19 +2,24 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class PieSliceInfo {
-  double value;
+  double startAngle;
+  double sweepAngle;
   Color color;
 
-  PieSliceInfo({required this.value, required this.color});
+  PieSliceInfo({
+    required this.startAngle,
+    required this.sweepAngle,
+    required this.color,
+  });
 
   @override
   String toString() {
-    return "PieSliceInfo(x: $value, y: $color)";
+    return "PieSliceInfo()";
   }
 }
 
 class PieChart extends StatelessWidget {
-  final double _holeRadius = 50.0;
+  // final double _holeRadius = 50.0;
 
   final List<PieSliceInfo> slices;
 
@@ -22,83 +27,97 @@ class PieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<double> data = slices.map((slice) => slice.value).toList();
-    List<Color> colors = slices.map((slice) => slice.color).toList();
-    return SizedBox(
-      width: 200,
-      height: 200,
-      child: CustomPaint(
-        painter: PieChartPainter(
-          data: data,
-          colors: colors,
-          holeRadius: _holeRadius,
-        ),
-      ),
+    return Stack(
+      children: slices
+          .map(
+            (e) => PieSliceButton(
+              onPressed: () {},
+              startAngle: e.startAngle,
+              sweepAngle: e.sweepAngle,
+              color: e.color,
+            ),
+          )
+          .toList(),
     );
   }
 }
 
-class PieChartPainter extends CustomPainter {
-  final List<double> data;
-  final List<Color> colors;
-  final double holeRadius;
-  late double total;
+class PieSliceBorder extends OutlinedBorder {
+  final double startAngle;
+  final double sweepAngle;
 
-  PieChartPainter({
-    required this.data,
-    required this.colors,
-    required this.holeRadius,
-  }) {
-    total = data.reduce((value, element) => value + element);
+  PieSliceBorder({
+    required this.startAngle,
+    required this.sweepAngle,
+  });
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(0);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
+    return Path(); // No inner path for a pie slice
   }
 
   @override
-  void paint(Canvas canvas, Size size) {
-    double startAngle = 0;
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    final Path path = Path();
+    final double centerX = rect.center.dx;
+    final double centerY = rect.center.dy;
 
-    for (int i = 0; i < data.length; i++) {
-      double sweepAngle = (data[i] / total) * 360;
-      _drawArc(canvas, size, startAngle, sweepAngle, colors[i]);
-      startAngle += sweepAngle;
-    }
+    path.moveTo(centerX, centerY); // Move to the center of the circle
+    path.lineTo(centerX + rect.width / 2 * cos(_degreesToRadians(startAngle)),
+        centerY + rect.height / 2 * sin(_degreesToRadians(startAngle)));
+    path.arcTo(rect, _degreesToRadians(startAngle),
+        _degreesToRadians(sweepAngle), false); // Arc representing the pie slice
+    path.close();
 
-    // Draw a smaller circle in the center to create a hole
-    final center = size.center(Offset.zero);
-    final Paint holePaint = Paint()
-      ..color = Colors.white; // Adjust hole color as needed
-    canvas.drawCircle(center, holeRadius, holePaint);
+    return path;
   }
 
-  void _drawArc(
-    Canvas canvas,
-    Size size,
-    double startAngle,
-    double sweepAngle,
-    Color color,
-  ) {
-    final Rect rect = Rect.fromCircle(
-      center: size.center(Offset.zero),
-      radius: size.width / 2,
-    );
-    final Paint paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
 
-    canvas.drawArc(
-      rect,
-      _degreesToRadians(startAngle),
-      _degreesToRadians(sweepAngle),
-      true,
-      paint,
+  @override
+  PieSliceBorder copyWith({BorderSide? side}) {
+    return PieSliceBorder(
+      startAngle: startAngle,
+      sweepAngle: sweepAngle,
     );
   }
+
+  @override
+  ShapeBorder scale(double t) => this;
 
   double _degreesToRadians(double degrees) {
     return degrees * pi / 180;
   }
+}
+
+class PieSliceButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final double startAngle;
+  final double sweepAngle;
+  final Color color;
+
+  PieSliceButton({
+    required this.onPressed,
+    required this.startAngle,
+    required this.sweepAngle,
+    required this.color,
+  });
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  Widget build(BuildContext context) {
+    var pieSliceShape =
+        PieSliceBorder(startAngle: startAngle, sweepAngle: sweepAngle);
+    return Material(
+      color: color,
+      shape: pieSliceShape,
+      child: InkWell(
+        onTap: onPressed,
+        customBorder: pieSliceShape,
+      ),
+    );
   }
 }
