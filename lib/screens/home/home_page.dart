@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/screens/home/home_data.dart';
+import 'package:namer_app/screens/home/home_scroll_subpages.dart';
 import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/query_provider.dart';
+
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -17,7 +18,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Query query = ref.watch(queryProvider);
+    QueryPrecursorState query = ref.watch(queryPrecursorProvider);
 
     return MaterialApp(
       home: Scaffold(
@@ -43,59 +44,31 @@ class _HomePageState extends ConsumerState<HomePage> {
             Period newPeriod, [
             dynamic dates,
           ]) {
-            ref.read(queryProvider.notifier).changePeriod(newPeriod, dates);
+            ref
+                .read(queryPrecursorProvider.notifier)
+                .changePeriod(newPeriod, dates);
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),
-        body: Padding(
-          padding: EdgeInsets.all(25.0),
-          child: Column(
-            children: [
-              ViewData(
-                startDate: DateTime(2000),
-                endDate: DateTime(2025),
-              ),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(16.0),
-                      child: HomeEntryButton(false),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(16.0),
-                      child: HomeEntryButton(true),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
+        body: Column(
+          children: [
+            Expanded(child: HomeScrollSubpages()),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Debug Info"),
-                  Text("Period: ${query.period}"),
-                  Text("start: ${query.getDateRange().start}"),
-                  Text("end: ${query.getDateRange().end}"),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          ref.read(queryProvider.notifier).decrement();
-                        },
-                        icon: Icon(Icons.arrow_left),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          ref.read(queryProvider.notifier).increment();
-                        },
-                        icon: Icon(Icons.arrow_right),
-                      ),
-                    ],
+                  Container(
+                    margin: EdgeInsets.all(16.0),
+                    child: HomeEntryButton(false),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(16.0),
+                    child: HomeEntryButton(true),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

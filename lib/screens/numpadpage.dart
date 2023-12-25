@@ -42,8 +42,8 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     DateTime? newDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: MIN_DATE,
-      lastDate: MAX_DATE,
+      firstDate: appMinDate,
+      lastDate: appMaxDate,
     );
     if (newDate == null) {
       return;
@@ -58,7 +58,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
       selected = categoryName;
     });
     insertTransaction(ref.read(databaseProvider));
-    ref.invalidate(transactionsProvider);
+    ref.invalidate(queryResultProvider);
   }
 
   void onBackspacePressed() {

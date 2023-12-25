@@ -1,7 +1,5 @@
-// ignore: non_constant_identifier_names
-final MIN_DATE = DateTime(2000);
-// ignore: non_constant_identifier_names
-final MAX_DATE = DateTime(2050);
+final appMinDate = DateTime(2000);
+final appMaxDate = DateTime(2050);
 
 enum Period {
   day(0),
@@ -90,61 +88,53 @@ DateTime coerceByPeriod(DateTime date, Period period) {
   }
 }
 
-DateTime incrementYear(DateTime date) {
-  int newYear = date.year + 1;
+DateTime incrementYear(DateTime date, [int amount = 1]) {
+  int newYear = date.year + amount;
   return date.copyWith(year: newYear);
 }
 
-DateTime decrementYear(DateTime date) {
-  int newYear = date.year - 1;
-  return date.copyWith(year: newYear);
+DateTime decrementYear(DateTime date, [int amount = 1]) {
+  return incrementYear(date, -amount);
 }
 
-DateTime incrementMonth(DateTime date) {
-  int newMonth = date.month + 1;
-  if (newMonth > 12) {
-    date = incrementYear(date);
-    newMonth %= 12;
-  }
-  return date.copyWith(month: newMonth);
+DateTime incrementMonth(DateTime date, [int amount = 1]) {
+  int nMonths = date.month + amount;
+  var nYearsOverflow = (nMonths - 1) ~/ 12 + 1;
+  var newMonth = (nMonths - 1) % 12 + 1;
+  return incrementYear(date.copyWith(month: newMonth), nYearsOverflow);
 }
 
-DateTime decrementMonth(DateTime date) {
-  int newMonth = date.month - 1;
-  if (newMonth < 1) {
-    date = decrementYear(date);
-    newMonth %= 12;
-  }
-  return date.copyWith(month: newMonth);
+DateTime decrementMonth(DateTime date, [int amount = 1]) {
+  return incrementMonth(date, -amount);
 }
 
-DateTime incrementWeek(DateTime date) {
-  return date.add(Duration(days: 7));
+DateTime incrementWeek(DateTime date, [int amount = 1]) {
+  return date.add(Duration(days: 7 * amount));
 }
 
-DateTime decrementWeek(DateTime date) {
-  return date.subtract(Duration(days: 7));
+DateTime decrementWeek(DateTime date, [int amount = 1]) {
+  return incrementWeek(date, -amount);
 }
 
-DateTime incrementDay(DateTime date) {
-  return date.add(Duration(days: 1));
+DateTime incrementDay(DateTime date, [int amount = 1]) {
+  return date.add(Duration(days: amount));
 }
 
-DateTime decrementDay(DateTime date) {
-  return date.subtract(Duration(days: 1));
+DateTime decrementDay(DateTime date, [int amount = 1]) {
+  return incrementDay(date, -amount);
 }
 
-DateTime incrementByPeriod(DateTime date, Period period) {
+DateTime incrementByPeriod(DateTime date, Period period, [int amount = 1]) {
   assert(period != Period.all && period != Period.interval);
   switch (period) {
     case Period.day:
-      return incrementDay(date);
+      return incrementDay(date, amount);
     case Period.week:
-      return incrementWeek(date);
+      return incrementWeek(date, amount);
     case Period.month:
-      return incrementMonth(date);
+      return incrementMonth(date, amount);
     case Period.year:
-      return incrementYear(date);
+      return incrementYear(date, amount);
     default:
       return date;
   }

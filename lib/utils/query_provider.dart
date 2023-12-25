@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/utils/dates.dart';
+import 'package:namer_app/utils/types.dart';
 
-class Query {
+// TODO: Find a better name for this
+class QueryPrecursorState {
   final DateTime startDate;
   final DateTime endDate;
   final Period period;
   late final DateTime originalStartDate; // Unused
 
-  Query({
+  QueryPrecursorState({
     required this.startDate,
     required this.endDate,
     this.period = Period.day,
@@ -16,16 +18,16 @@ class Query {
     originalStartDate = startDate;
   }
 
-  Query setPeriod(Period newPeriod) {
-    return Query(
+  QueryPrecursorState setPeriod(Period newPeriod) {
+    return QueryPrecursorState(
       startDate: startDate,
       endDate: endDate,
       period: newPeriod,
     );
   }
 
-  Query setDates(DateTime newStartDate, DateTime newEndDate) {
-    return Query(
+  QueryPrecursorState setDates(DateTime newStartDate, DateTime newEndDate) {
+    return QueryPrecursorState(
       startDate: newStartDate,
       endDate: newEndDate,
       period: period,
@@ -45,8 +47,8 @@ class Query {
       case (Period.year):
         newEndDate = incrementYear(newStartDate);
       case (Period.all):
-        newStartDate = MIN_DATE;
-        newEndDate = MAX_DATE;
+        newStartDate = appMinDate;
+        newEndDate = appMaxDate;
       case (Period.interval):
         newEndDate = endDate;
     }
@@ -62,12 +64,12 @@ class Query {
   }
 }
 
-class QueryNotifier extends Notifier<Query> {
+class QueryPrecursor extends Notifier<QueryPrecursorState> {
   @override
-  Query build() {
-    return Query(
+  QueryPrecursorState build() {
+    return QueryPrecursorState(
       startDate: coerceToDay(DateTime.now()),
-      endDate: coerceToDay(DateTime.now()),
+      endDate: incrementDay(coerceToDay(DateTime.now())),
     );
   }
 
@@ -90,21 +92,22 @@ class QueryNotifier extends Notifier<Query> {
     state = newState;
   }
 
-  void increment() {
-    state = state.setDates(
-      incrementByPeriod(state.startDate, state.period),
-      state.endDate,
+  Query getQueryByIndex(int pageIndex) {
+    DateTime queryStartDate = incrementByPeriod(
+      state.startDate,
+      state.period,
+      pageIndex,
     );
-  }
-
-  void decrement() {
-    state = state.setDates(
-      decrementByPeriod(state.startDate, state.period),
+    DateTime queryEndDate = incrementByPeriod(
       state.endDate,
+      state.period,
+      pageIndex,
     );
+    return Query(queryStartDate, queryEndDate);
   }
 }
 
-final queryProvider = NotifierProvider<QueryNotifier, Query>(() {
-  return QueryNotifier();
+final queryPrecursorProvider =
+    NotifierProvider<QueryPrecursor, QueryPrecursorState>(() {
+  return QueryPrecursor();
 });

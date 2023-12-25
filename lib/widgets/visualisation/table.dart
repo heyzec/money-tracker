@@ -96,8 +96,11 @@ class _BreakdownState extends ConsumerState<Breakdown> {
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text(
-                          dateTimeToStringShort(t.date),
+                        child: Tooltip(
+                          message: "Debug: ${t.date}",
+                          child: Text(
+                            dateTimeToStringShort(t.date),
+                          ),
                         ),
                       ),
                     ],

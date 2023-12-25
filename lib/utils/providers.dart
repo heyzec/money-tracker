@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/helpers.dart';
-import 'package:namer_app/utils/query_provider.dart';
+import 'package:namer_app/utils/types.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   AppDatabase database = AppDatabase();
@@ -16,16 +16,16 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
   return database.getCategories().get();
 });
 
-final transactionsProvider =
-    FutureProvider<Map<Category, List<Transaction>>>((ref) async {
+/// This provider takes in a Query and returns a QueryResult
+final queryResultProvider =
+    FutureProvider.autoDispose.family<QueryResult, Query>((ref, query) async {
   AppDatabase database = ref.read(databaseProvider);
   List<Category> categories = await ref.watch(categoriesProvider.future);
 
-  Query query = ref.watch(queryProvider);
   var transactions = await database
       .getTransactionsWithinDateRange(
-        startDate: query.getDateRange().start,
-        endDate: query.getDateRange().end,
+        startDate: query.startDate,
+        endDate: query.endDate,
       )
       .get();
 

@@ -34,8 +34,8 @@ class Sidebar extends StatelessWidget {
               onPressed: () async {
                 DateTimeRange? dateRange = await showDateRangePicker(
                   context: context,
-                  firstDate: MIN_DATE,
-                  lastDate: MAX_DATE,
+                  firstDate: appMinDate,
+                  lastDate: appMaxDate,
                 );
                 callback(Period.interval, dateRange);
               },
@@ -49,8 +49,8 @@ class Sidebar extends StatelessWidget {
                 DateTime? date = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
-                  firstDate: MIN_DATE,
-                  lastDate: MAX_DATE,
+                  firstDate: appMinDate,
+                  lastDate: appMaxDate,
                 );
                 callback(Period.day, date);
               },
