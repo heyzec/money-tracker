@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/screens/home/home_scroll_subpages.dart';
 import 'package:namer_app/screens/numpadpage.dart';
+import 'package:namer_app/screens/sandbox.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/query_provider.dart';
@@ -15,6 +16,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _showSandbox = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,15 @@ class _HomePageState extends ConsumerState<HomePage> {
         appBar: AppBar(
           title: const Text('Home'),
           actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.face),
+              tooltip: 'Sandbox',
+              onPressed: () {
+                setState(() {
+                  _showSandbox = !_showSandbox;
+                });
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'Setting Icon',
@@ -50,26 +61,28 @@ class _HomePageState extends ConsumerState<HomePage> {
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),
-        body: Column(
-          children: [
-            Expanded(child: HomeScrollSubpages()),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        body: _showSandbox
+            ? Sandbox()
+            : Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: HomeEntryButton(false),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: HomeEntryButton(true),
+                  Expanded(child: HomeScrollSubpages()),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(false),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(true),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
