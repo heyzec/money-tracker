@@ -35,22 +35,43 @@ class HomeScrollSubpage extends ConsumerWidget {
     return transactions.when(
       data: (t) {
         var transactions = t;
-        return DraggableDrawer();
-        return Column(
-          children: [
-            Text("Total: ${sum(transactions) / 100}"),
-            Expanded(child: PieChartVisual(transactions)),
-            Expanded(child: Breakdown(transactions)),
-            Column(
+        double total = sum(transactions) / 100;
+        return DraggableDrawer(
+          backgroundChild: PieChartVisual(transactions),
+          handleChild: Container(
+            color: Colors.orange,
+            child: Stack(
               children: [
-                Text("Debug Info"),
-                Text("Page Index: $pageIndex"),
-                Text("Period: ${queryPrecursor.state.period}"),
-                Text("Start: ${query.startDate}"),
-                Text("End: ${query.endDate}"),
+                Center(
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    child: Text("Total: $total"),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: DefaultTextStyle(
+                    style: TextStyle(fontSize: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("Page Index: $pageIndex"),
+                        Text("Period: ${queryPrecursor.state.period}"),
+                        Text("Start: ${query.startDate}"),
+                        Text("End: ${query.endDate}"),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-          ],
+          ),
+          scrollableBuilder: (ScrollController scrollController) {
+            return Breakdown(
+              data: transactions,
+              scrollController: scrollController,
+            );
+          },
         );
       },
       loading: () => Center(child: CircularProgressIndicator()),

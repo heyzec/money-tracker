@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/utils/helpers.dart';
 
 class DraggableDrawer extends StatefulWidget {
+  final Function(ScrollController) scrollableBuilder;
+  final Widget backgroundChild;
+  final double handleHeight;
+  final Widget? handleChild;
+
+  DraggableDrawer({
+    required this.backgroundChild,
+    required this.scrollableBuilder,
+    this.handleHeight = 50,
+    this.handleChild,
+  });
+
   @override
   State<DraggableDrawer> createState() => _DraggableDrawerState();
 }
@@ -11,11 +23,12 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
   double drawerSize = 1.0;
 
+  double gestureStartLocalPosition = 0.0;
+  double gestureStartSize = 0.0;
+
   // For debugging purposes
-  double? gestureStartLocalPosition;
-  double? gestureStartSize;
-  double gestureUpdateLocalPosition = 0.0;
-  double? gestureEndVelocity;
+  double gestureUpdateLocalPositionDebug = 0.0;
+  double gestureEndVelocityDebug = 0.0;
 
   @override
   void initState() {
@@ -29,85 +42,56 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    double viewportHeight = MediaQuery.of(context).size.height;
-    double appbarHeight = Scaffold.of(context).appBarMaxHeight!;
-    double drawerHeight = viewportHeight - appbarHeight;
-    // TODO: Remove this quickfix line
-    drawerHeight -= 2.0;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double drawerHeight = constraints.maxHeight;
 
-    const double minDrawerSize = 0.1;
-
-    return Scaffold(
-      body: Stack(
-        children: [
-          Opacity(
-            opacity: controller.isAttached ? 1 - drawerSize : 1,
-            // duration: Duration(milliseconds: 200),
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.yellow[50],
-              child: Column(
-                children: [
-                  Text(
-                    "Gesture start local position: ${gestureStartLocalPosition?.toStringAsFixed(2)}",
-                  ),
-                  Text(
-                    "Gesture update local position: ${gestureUpdateLocalPosition.toStringAsFixed(2)}",
-                  ),
-                  Text(
-                    "Controller size in pixels: ${drawerSize.toStringAsFixed(2)}",
-                  ),
-                  Text(
-                    "Gesture end velocity: ${gestureEndVelocity?.toStringAsFixed(2)}",
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Center(
-                child: SizedBox(
-                  height: drawerHeight,
-                  child: DraggableScrollableSheet(
-                    snap: true,
-                    initialChildSize: minDrawerSize,
-                    minChildSize: minDrawerSize,
-                    maxChildSize: 1.0,
-                    controller: controller,
-                    builder: (
-                      BuildContext context,
-                      ScrollController scrollController,
-                    ) {
-                      return Container(
-                        color: Colors.lightBlue[100],
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: drawerHeight * minDrawerSize,
-                              child: getGestureDetector(minDrawerSize),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                controller: scrollController,
-                                itemCount: 25,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(title: Text('Item $index'));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+        double minDrawerSize = widget.handleHeight / drawerHeight;
+        return Stack(
+          children: [
+            Opacity(
+              opacity: controller.isAttached ? 1 - drawerSize : 1,
+              child: SizedBox(
+                height: drawerHeight - widget.handleHeight,
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.yellow[50],
+                  child: widget.backgroundChild,
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: drawerHeight,
+                child: DraggableScrollableSheet(
+                  snap: true,
+                  initialChildSize: minDrawerSize,
+                  minChildSize: minDrawerSize,
+                  maxChildSize: 1.0,
+                  controller: controller,
+                  builder: (
+                    BuildContext context,
+                    ScrollController scrollController,
+                  ) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: drawerHeight * minDrawerSize,
+                          child: getGestureDetector(minDrawerSize),
+                        ),
+                        Expanded(
+                          child: widget.scrollableBuilder(scrollController),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -121,26 +105,28 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
         setState(() {
-          gestureUpdateLocalPosition = details.localPosition.dy;
+          gestureUpdateLocalPositionDebug = details.localPosition.dy;
         });
         var deltaInPixels =
-            details.localPosition.dy - gestureStartLocalPosition!;
+            details.localPosition.dy - gestureStartLocalPosition;
         var deltaInFrac = controller.pixelsToSize(deltaInPixels);
-        var newFrac = gestureStartSize! - deltaInFrac;
-        newFrac = newFrac.clamp(0.1, 1.0);
+        var newFrac = gestureStartSize - deltaInFrac;
+        newFrac = newFrac.clamp(minDrawerSize, 1.0);
         controller.jumpTo(newFrac);
       },
       onVerticalDragEnd: (DragEndDetails details) {
-        const thresholdVelocity = 1000;
         setState(() {
-          gestureEndVelocity = details.primaryVelocity;
+          gestureEndVelocityDebug = details.primaryVelocity ?? 1337;
         });
+
+        const double thresholdVelocity = 1000;
+        double gestureEndVelocity = details.primaryVelocity ?? 0.0;
         double newSize;
         int duration;
-        if (gestureEndVelocity! > thresholdVelocity) {
+        if (gestureEndVelocity > thresholdVelocity) {
           newSize = 0.0;
           duration = 100;
-        } else if (gestureEndVelocity! < -thresholdVelocity) {
+        } else if (gestureEndVelocity < -thresholdVelocity) {
           newSize = 1.0;
           duration = 100;
         } else {
@@ -160,7 +146,7 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
           curve: Curves.easeOutCubic,
         );
       },
-      child: Container(color: Colors.orange),
+      child: widget.handleChild ?? Container(color: Colors.orange),
     );
   }
 }

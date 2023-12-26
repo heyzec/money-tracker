@@ -66,22 +66,21 @@ class _HomePageState extends ConsumerState<HomePage> {
             : Column(
                 children: [
                   Expanded(child: HomeScrollSubpages()),
-                  // Removed to test DraggableDrawer
-                  // Center(
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     children: [
-                  //       Container(
-                  //         margin: EdgeInsets.all(16.0),
-                  //         child: HomeEntryButton(false),
-                  //       ),
-                  //       Container(
-                  //         margin: EdgeInsets.all(16.0),
-                  //         child: HomeEntryButton(true),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(false),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(true),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
       ),

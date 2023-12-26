@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 
 import 'screens/home/home_page.dart';
 
 void main() async {
+  debugPaintSizeEnabled = false;
   runApp(
     ProviderScope(
       child: MyApp(),

@@ -7,8 +7,9 @@ import 'package:namer_app/utils/providers.dart';
 
 class Breakdown extends ConsumerStatefulWidget {
   final Map<Category, List<Transaction>> data;
+  final ScrollController scrollController;
 
-  Breakdown(this.data);
+  Breakdown({required this.data, required this.scrollController});
 
   @override
   ConsumerState<Breakdown> createState() => _BreakdownState();
@@ -120,6 +121,7 @@ class _BreakdownState extends ConsumerState<Breakdown> {
     return categories.when(
       data: (categories) {
         return ListView(
+          controller: widget.scrollController,
           children: () {
             List<ExpansionTile> panels = [];
             for (var entry in grouped.entries) {

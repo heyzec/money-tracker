@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/colors.dart';
 import 'package:namer_app/widgets/cards/category_card.dart';
 import 'package:namer_app/widgets/visualisation/pie_chart.dart';
 
@@ -13,6 +14,66 @@ class PieChartVisual extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return Stack(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (int i = 0; i < 5; i++)
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (int j = 0; j < 4; j++)
+                      Expanded(
+                        child: Container(
+                          color: combineColors(
+                            Colors.blue[j * 100] ?? Colors.black,
+                            Colors.orange[i * 100] ?? Colors.black,
+                          ),
+                          child: Center(
+                            child: CategoryCard(
+                              iconName: "cocktail",
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(flex: 1, child: Container()),
+            Expanded(
+              flex: 2,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(flex: 1, child: Container()),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      child: buildPie(),
+                    ),
+                  ),
+                  Expanded(flex: 1, child: Container()),
+                ],
+              ),
+            ),
+            Expanded(flex: 1, child: Container()),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildPie() {
     if (data.isEmpty) {
       return Text("No Data");
     }
@@ -48,25 +109,28 @@ class PieChartVisual extends ConsumerWidget {
       currentAngle += sweepAngle;
     });
 
-    return Container(
-      alignment: Alignment.center,
-      color: Colors.blue,
-      child: CustomPaint(
-        foregroundPainter: CategoryIndicatorPainter(
-          Map.of(
-            {
-              Offset(800, 100): 0,
-              Offset(10, 400): 180,
-            },
+    return Stack(
+      children: [
+        Container(
+          alignment: Alignment.center,
+          child: CustomPaint(
+            foregroundPainter: CategoryIndicatorPainter(
+              Map.of(
+                {
+                  Offset(800, 100): 0,
+                  Offset(10, 400): 180,
+                },
+              ),
+            ),
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: PieChart(slices),
+              ),
+            ),
           ),
         ),
-        child: Center(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: PieChart(slices),
-          ),
-        ),
-      ),
+      ],
     );
   }
 }
@@ -100,65 +164,3 @@ class CategoryIndicatorPainter extends CustomPainter {
     return false;
   }
 }
-
-/* class IconContainer extends StatelessWidget {
-  const IconContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-            CategoryCard(iconName: "cocktail", color: Colors.red),
-          ],
-        ),
-      ],
-    );
-  }
-} */
