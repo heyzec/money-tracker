@@ -22,3 +22,11 @@ double snapToValue(double value, double snapPoint1, double snapPoint2) {
     return snapPoint2;
   }
 }
+
+int combineHashes(int hash1, int hash2) {
+  // Use Jenkins hash function to combine the hash codes of the two values
+  int hash = 17;
+  hash = 37 * hash + hash1;
+  hash = 37 * hash + hash2;
+  return hash;
+}

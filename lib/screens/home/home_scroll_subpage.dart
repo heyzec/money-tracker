@@ -37,7 +37,7 @@ class HomeScrollSubpage extends ConsumerWidget {
         var transactions = t;
         double total = sum(transactions) / 100;
         return DraggableDrawer(
-          backgroundChild: PieChartVisual(transactions),
+          backgroundChild: PieChartVisualisation(transactions),
           handleChild: Container(
             color: Colors.orange,
             child: Stack(

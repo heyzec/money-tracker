@@ -1,4 +1,5 @@
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/helpers.dart';
 
 class Query {
   DateTime startDate;
@@ -16,11 +17,7 @@ class Query {
 
   @override
   int get hashCode {
-    // Use Jenkins hash function to combine the hash codes of the two values
-    int hash = 17;
-    hash = 37 * hash + startDate.hashCode;
-    hash = 37 * hash + endDate.hashCode;
-    return hash;
+    return combineHashes(startDate.hashCode, endDate.hashCode);
   }
 
   @override
@@ -30,3 +27,29 @@ class Query {
 }
 
 typedef QueryResult = Map<Category, List<Transaction>>;
+
+class Pair<T, U> {
+  final T first;
+  final U second;
+
+  Pair(this.first, this.second);
+
+  @override
+  String toString() {
+    return "($first, $second)";
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Pair<T, U> &&
+        other.first == first &&
+        other.second == second;
+  }
+
+  @override
+  int get hashCode => combineHashes(first.hashCode, second.hashCode);
+}
+
+class Coord extends Pair<int, int> {
+  Coord(super.first, super.second);
+}
