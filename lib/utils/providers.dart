@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/helpers.dart';
 import 'package:namer_app/utils/types.dart';
 
@@ -30,4 +31,29 @@ final queryResultProvider =
       .get();
 
   return groupTransactions(transactions, categories);
+});
+
+class AppStateNotifier extends Notifier<AppState> {
+  @override
+  AppState build() {
+    return AppState(
+      startDate: coerceToDay(DateTime.now()),
+      period: Period.day,
+    );
+  }
+
+  void changePeriod(Period newPeriod, [DateTime? newStartDate]) {
+    AppState newState = state;
+
+    if (newStartDate != null) {
+      newState = newState.copyWith(startDate: newStartDate);
+    }
+    newState = newState.copyWith(period: newPeriod);
+    state = newState;
+  }
+
+}
+
+final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(() {
+  return AppStateNotifier();
 });

@@ -1,5 +1,33 @@
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/helpers.dart';
+
+/// Immutable class that captures state of the object.
+/// To be accessed and modified via appStateProvider.
+class AppState {
+  final DateTime startDate;
+  final Period period;
+
+  AppState({
+    required this.startDate,
+    required this.period,
+  });
+
+  AppState copyWith({
+    DateTime? startDate,
+    Period? period,
+  }) {
+    return AppState(
+      startDate: startDate ?? this.startDate,
+      period: period ?? this.period,
+    );
+  }
+
+  @override
+  String toString() {
+    return "$period, $startDate";
+  }
+}
 
 class Query {
   DateTime startDate;
@@ -23,6 +51,18 @@ class Query {
   @override
   String toString() {
     return "Query($startDate $endDate)";
+  }
+
+  static Query generateQuery({
+    required int pageIndex,
+    required DateTime startDate,
+    required Period period,
+  }) {
+    DateTime coercedDate = period.coerceDate(startDate);
+    DateTime queryStartDate = period.incrementDate(coercedDate, pageIndex);
+    DateTime queryEndDate = period.incrementDate(coercedDate, pageIndex + 1);
+
+    return Query(queryStartDate, queryEndDate);
   }
 }
 

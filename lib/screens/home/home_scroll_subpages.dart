@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 import 'package:namer_app/screens/home/home_scroll_subpage.dart';
-import 'package:namer_app/utils/query_provider.dart';
+import 'package:namer_app/utils/providers.dart';
 
 class HomeScrollSubpages extends ConsumerStatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(queryPrecursorProvider);
+    ref.watch(appStateProvider);
     if (_controller.hasClients) {
       // When QueryPrecursor updates, reset page index to 0
       _controller.jumpTo(0.0);

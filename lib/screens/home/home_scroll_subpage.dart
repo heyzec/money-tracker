@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/query_provider.dart';
 import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
 import 'package:namer_app/widgets/draggable_drawer.dart';
@@ -26,9 +25,13 @@ class HomeScrollSubpage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    QueryPrecursor queryPrecursor = ref.watch(queryPrecursorProvider.notifier);
+    AppState appState = ref.watch(appStateProvider);
 
-    Query query = queryPrecursor.getQueryByIndex(pageIndex);
+    Query query = Query.generateQuery(
+      pageIndex: pageIndex,
+      startDate: appState.startDate,
+      period: appState.period,
+    );
 
     AsyncValue<QueryResult> transactions =
         ref.watch(queryResultProvider(query));
@@ -91,7 +94,7 @@ class HomeScrollSubpage extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text("Page Index: $pageIndex"),
-                        Text("Period: ${queryPrecursor.state.period}"),
+                        Text("Period: ${appState.period}"),
                         Text("Start: ${query.startDate}"),
                         Text("End: ${query.endDate}"),
                       ],

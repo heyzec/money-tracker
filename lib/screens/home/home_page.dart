@@ -5,8 +5,9 @@ import 'package:namer_app/screens/numpadpage.dart';
 import 'package:namer_app/screens/sandbox.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/query_provider.dart';
+import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
+import 'package:namer_app/utils/types.dart';
 
 import 'package:namer_app/widgets/sidebar.dart';
 
@@ -21,7 +22,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    QueryPrecursorState query = ref.watch(queryPrecursorProvider);
+    AppState query = ref.watch(appStateProvider);
 
     return MaterialApp(
       home: Scaffold(
@@ -56,9 +57,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             Period newPeriod, [
             DateTime? date,
           ]) {
-            ref
-                .read(queryPrecursorProvider.notifier)
-                .changePeriod(newPeriod, date);
+            ref.read(appStateProvider.notifier).changePeriod(newPeriod, date);
             _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
           }),
         ),
