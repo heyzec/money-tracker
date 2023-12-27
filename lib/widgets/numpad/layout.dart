@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 
 extension ListSpaceBetweenExtension on List<Widget> {
@@ -111,11 +112,7 @@ class _NumpadButton extends StatelessWidget {
           onPressed!();
         }
       },
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+      style: appRoundedButtonStyle,
       child: Text(
         actionToDisplay(action),
         textScaleFactor: 2,

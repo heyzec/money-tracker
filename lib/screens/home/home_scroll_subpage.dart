@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/query_provider.dart';
+import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
 import 'package:namer_app/widgets/draggable_drawer.dart';
 import 'package:namer_app/widgets/visualisation/pie_visual.dart';
@@ -38,14 +39,48 @@ class HomeScrollSubpage extends ConsumerWidget {
         double total = sum(transactions) / 100;
         return DraggableDrawer(
           backgroundChild: PieChartVisualisation(transactions),
-          handleChild: Container(
-            color: Colors.orange,
+          buildDrawerHandle: (toggleDrawer) => Container(
+            color: appBackgroundColor,
             child: Stack(
               children: [
                 Center(
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    child: Text("Total: $total"),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.drag_handle,
+                          color: Colors.green,
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: appRoundedButtonStyle.copyWith(
+                          backgroundColor: MaterialStatePropertyAll(
+                            total >= 0 ? appIncomeColor : appExpenseColor,
+                          ),
+                        ),
+                        onPressed: () {
+                          toggleDrawer();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            "Balance ${total.isNegative ? "-" : ""}\$${total.abs()}",
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.drag_handle,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Align(

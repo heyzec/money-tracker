@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/utils/helpers.dart';
 
 class DraggableDrawer extends StatefulWidget {
-  final Function(ScrollController) scrollableBuilder;
+  final Widget Function(ScrollController) scrollableBuilder;
   final Widget backgroundChild;
   final double handleHeight;
-  final Widget? handleChild;
+  final Widget Function(VoidCallback)? buildDrawerHandle;
+  final bool openDrawerInitially;
 
   DraggableDrawer({
     required this.backgroundChild,
     required this.scrollableBuilder,
     this.handleHeight = 50,
-    this.handleChild,
+    this.buildDrawerHandle,
+    this.openDrawerInitially = false,
   });
 
   @override
@@ -21,7 +23,7 @@ class DraggableDrawer extends StatefulWidget {
 class _DraggableDrawerState extends State<DraggableDrawer> {
   DraggableScrollableController controller = DraggableScrollableController();
 
-  double drawerSize = 1.0;
+  double drawerSize = 0.0; // Invalid value for now
 
   double gestureStartLocalPosition = 0.0;
   double gestureStartSize = 0.0;
@@ -32,9 +34,17 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
   @override
   void initState() {
+    if (widget.openDrawerInitially) {
+      drawerSize = 1.0;
+    }
+
     controller.addListener(() {
-      setState(() {
-        drawerSize = controller.size;
+      // Wrap setState in a future to delay it to the next tick.
+      // This avoids the "setState() or markNeedsBuild() called during build" error
+      Future.delayed(Duration.zero, () async {
+        setState(() {
+          drawerSize = controller.size;
+        });
       });
     });
     super.initState();
@@ -45,8 +55,8 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         double drawerHeight = constraints.maxHeight;
+        double drawerHandleSize = widget.handleHeight / drawerHeight;
 
-        double minDrawerSize = widget.handleHeight / drawerHeight;
         return Stack(
           children: [
             Opacity(
@@ -66,8 +76,8 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
                 height: drawerHeight,
                 child: DraggableScrollableSheet(
                   snap: true,
-                  initialChildSize: minDrawerSize,
-                  minChildSize: minDrawerSize,
+                  initialChildSize: drawerHandleSize,
+                  minChildSize: drawerHandleSize,
                   maxChildSize: 1.0,
                   controller: controller,
                   builder: (
@@ -77,8 +87,8 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
                     return Column(
                       children: [
                         SizedBox(
-                          height: drawerHeight * minDrawerSize,
-                          child: getGestureDetector(minDrawerSize),
+                          height: drawerHeight * drawerHandleSize,
+                          child: getGestureDetector(drawerHandleSize),
                         ),
                         Expanded(
                           child: widget.scrollableBuilder(scrollController),
@@ -93,6 +103,33 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void moveDrawerTo(
+    double size,
+    int milliseconds,
+    /* [bool animate = true] */
+  ) {
+    controller.animateTo(
+      size,
+      duration: Duration(milliseconds: milliseconds),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void openDrawer([int milliseconds = 300]) {
+    moveDrawerTo(1.0, milliseconds);
+  }
+
+  void closeDrawer([int milliseconds = 300]) {
+    // 0.0 will be clamped to minChildSize parameter (minDrawerSize)
+    moveDrawerTo(0.0, milliseconds);
   }
 
   GestureDetector getGestureDetector(double minDrawerSize) {
@@ -121,32 +158,34 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
         const double thresholdVelocity = 1000;
         double gestureEndVelocity = details.primaryVelocity ?? 0.0;
-        double newSize;
-        int duration;
         if (gestureEndVelocity > thresholdVelocity) {
-          newSize = 0.0;
-          duration = 100;
-        } else if (gestureEndVelocity < -thresholdVelocity) {
-          newSize = 1.0;
-          duration = 100;
-        } else {
-          newSize = snapToValue(
-            controller.size,
-            minDrawerSize,
-            1.0,
-          );
-          duration = 200;
+          closeDrawer(100);
+          return;
         }
-
-        double deltaSize = (newSize - controller.size).abs();
-        duration = (deltaSize * 1000).toInt().clamp(100, 500);
-        controller.animateTo(
-          newSize,
-          duration: Duration(milliseconds: duration),
-          curve: Curves.easeOutCubic,
+        if (gestureEndVelocity < -thresholdVelocity) {
+          openDrawer(100);
+          return;
+        }
+        double newSize = snapToValue(
+          controller.size,
+          minDrawerSize,
+          1.0,
         );
+
+        // Speed of animation depends on how much the drawer needs to move
+        double deltaSize = (newSize - controller.size).abs();
+        int milliseconds = (deltaSize * 1000).toInt().clamp(100, 500);
+        moveDrawerTo(newSize, milliseconds);
       },
-      child: widget.handleChild ?? Container(color: Colors.orange),
+      child: widget.buildDrawerHandle != null
+          ? widget.buildDrawerHandle!(() {
+              if (drawerSize < 0.6) {
+                openDrawer();
+              } else {
+                closeDrawer();
+              }
+            })
+          : Container(color: Colors.orange),
     );
   }
 }

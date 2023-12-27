@@ -6,6 +6,7 @@ import 'package:namer_app/screens/sandbox.dart';
 import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/query_provider.dart';
+import 'package:namer_app/utils/styling.dart';
 
 import 'package:namer_app/widgets/sidebar.dart';
 
@@ -95,7 +96,7 @@ class HomeEntryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = isIncome ? Colors.green : Colors.red;
+    Color color = isIncome ? appIncomeColor : appExpenseColor;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: CircleBorder(),

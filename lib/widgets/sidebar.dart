@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/dates.dart';
+import 'package:namer_app/utils/styling.dart';
 
 class Sidebar extends StatelessWidget {
   final Period selected;
@@ -87,13 +88,7 @@ class SidebarButton extends StatelessWidget {
     // ignore: non_constant_identifier_names
     Function ButtonType = (isFilled) ? FilledButton.new : OutlinedButton.new;
     return ButtonType(
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-        ),
-      ),
+      style: appRoundedButtonStyle,
       child: Text(text),
       onPressed: onPressed,
     );
