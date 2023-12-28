@@ -628,6 +628,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         }).asyncMap(transactions.mapFromRow);
   }
 
+  Selectable<GetDateExtentResult> getDateExtent() {
+    return customSelect(
+        'SELECT MIN(date) AS min_date, MAX(date) AS max_date FROM transactions',
+        variables: [],
+        readsFrom: {
+          transactions,
+        }).map((QueryRow row) => GetDateExtentResult(
+          minDate: row.readNullable<DateTime>('min_date'),
+          maxDate: row.readNullable<DateTime>('max_date'),
+        ));
+  }
+
   Selectable<Category> getCategories() {
     return customSelect('SELECT * FROM categories', variables: [], readsFrom: {
       categories,
@@ -653,4 +665,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
       [categories, transactions];
+}
+
+class GetDateExtentResult {
+  final DateTime? minDate;
+  final DateTime? maxDate;
+  GetDateExtentResult({
+    this.minDate,
+    this.maxDate,
+  });
 }

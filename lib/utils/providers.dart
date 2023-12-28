@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
@@ -56,8 +57,26 @@ class AppStateNotifier extends Notifier<AppState> {
   void changeDrawerOpen(bool b) {
     state = state.copyWith(isDrawerOpen: b);
   }
+
+  void increment() {
+    state =
+        state.copyWith(startDate: state.period.incrementDate(state.startDate));
+  }
+
+  void decrement() {
+    state = state.copyWith(
+      startDate: state.period.incrementDate(state.startDate, -1),
+    );
+  }
 }
 
 final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(() {
   return AppStateNotifier();
+});
+
+final dateExtentProvider = FutureProvider<DateTimeRange>((ref) async {
+  AppDatabase database = ref.read(databaseProvider);
+  return database.getDateExtent().getSingle().then(
+        (value) => DateTimeRange(start: value.minDate!, end: value.maxDate!),
+      );
 });

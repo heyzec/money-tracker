@@ -75,8 +75,8 @@ class Period {
         return "Period.month";
       case Period.year:
         return "Period.year";
-      case Period.year:
-        return "Period.year";
+      case Period.all:
+        return "Period.all";
       default:
         assert(isCustom());
         return "Period.custom(days: ${duration!.inDays})";
@@ -94,12 +94,7 @@ class Period {
       case Period.year:
         return coerceToYear(date);
       default:
-        if (isCustom()) {
-          // Does not make sense to coerce intervals
-          return date;
-        }
-        assert(false);
-        return date;
+        return coerceToDay(date);
     }
   }
 
@@ -116,6 +111,23 @@ class Period {
         assert(false);
         return date;
     }
+  }
+
+  int countPeriods(DateTime targetDate, DateTime baseDate) {
+    if (this == Period.all) {
+      return 0;
+    }
+    int i = 0;
+    DateTime date = coerceDate(baseDate);
+    date = incrementDate(date);
+    while (true) {
+      if (date.isAfter(targetDate)) {
+        break;
+      }
+      date = incrementDate(date);
+      i++;
+    }
+    return i;
   }
 }
 
@@ -153,7 +165,7 @@ DateTime decrementYear(DateTime date, [int amount = 1]) {
 
 DateTime incrementMonth(DateTime date, [int amount = 1]) {
   int nMonths = date.month + amount;
-  var nYearsOverflow = (nMonths - 1) ~/ 12 + 1;
+  var nYearsOverflow = (nMonths - 1) ~/ 12;
   var newMonth = (nMonths - 1) % 12 + 1;
   return incrementYear(date.copyWith(month: newMonth), nYearsOverflow);
 }

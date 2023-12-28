@@ -29,3 +29,7 @@ getTransactionsWithinDateRange:
     SELECT * FROM transactions
     WHERE date >= :startDate
         AND date < :endDate;
+
+getDateExtent:
+    SELECT MIN(date) as min_date, MAX(date) AS max_date
+    FROM transactions;

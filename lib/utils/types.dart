@@ -30,13 +30,15 @@ class AppState {
 
   @override
   int get hashCode {
-    return combineHashes(combineHashes(startDate.hashCode, period.hashCode),
-        isDrawerOpen.hashCode);
+    return combineHashes(
+      combineHashes(startDate.hashCode, period.hashCode),
+      isDrawerOpen.hashCode,
+    );
   }
 
   @override
   String toString() {
-    return "$period, $startDate";
+    return "AppState(period: $period, startDate: $startDate, isDrawerOpen: $isDrawerOpen";
   }
 
   @override
@@ -74,13 +76,14 @@ class Query {
 
   static Query generateQuery({
     required int pageIndex,
-    required DateTime startDate,
+    required DateTime baseDate,
     required Period period,
   }) {
-    DateTime coercedDate = period.coerceDate(startDate);
-    DateTime queryStartDate = period.incrementDate(coercedDate, pageIndex);
-    DateTime queryEndDate = period.incrementDate(coercedDate, pageIndex + 1);
-
+    if (period == Period.all) {
+      return Query(appMinDate, appMaxDate);
+    }
+    DateTime queryStartDate = period.incrementDate(baseDate, pageIndex);
+    DateTime queryEndDate = period.incrementDate(queryStartDate, 1);
     return Query(queryStartDate, queryEndDate);
   }
 }

@@ -7,7 +7,6 @@ import 'package:namer_app/screens/settings/settings.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
-import 'package:namer_app/utils/types.dart';
 
 import 'package:namer_app/widgets/sidebar.dart';
 
@@ -22,8 +21,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime startDate = ref.watch(appStateProvider.select((appState) => appState.startDate));
-    Period period = ref.watch(appStateProvider.select((appState) => appState.period));
+    print("Build: HomePage()");
+    // DateTime startDate = ref.watch(appStateProvider.select((appState) => appState.startDate));
+    Period period =
+        ref.watch(appStateProvider.select((appState) => appState.period));
 
     return MaterialApp(
       home: Scaffold(
