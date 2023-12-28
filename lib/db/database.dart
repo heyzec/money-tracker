@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:namer_app/db/utils/seeds.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+// ignore: depend_on_referenced_packages
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 

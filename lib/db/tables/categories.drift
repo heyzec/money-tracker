@@ -6,12 +6,13 @@ CREATE TABLE categories (
     iconName TEXT NOT NULL,
     -- ColorConverter does not seem to work
     -- color    TEXT NOT NULL MAPPED BY `const ColorConverter()`
-    color INT NOT NULL
+    color INT NOT NULL,
+    isIncome BOOLEAN  NOT NULL
 ) AS Category;
 
 getCategories:
     SELECT * FROM categories;
 
 insertCategory:
-    INSERT INTO categories (name, iconName, color)
-    VALUES (:name, :iconName, :color);
+    INSERT INTO categories (name, iconName, color, isIncome)
+    VALUES (:name, :iconName, :color, :isIncome);

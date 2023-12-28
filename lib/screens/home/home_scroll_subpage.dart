@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
@@ -14,19 +13,28 @@ class HomeScrollSubpage extends ConsumerWidget {
 
   HomeScrollSubpage({required this.pageIndex, required this.query});
 
-  int sum(Map<Category, List<Transaction>> transactions) {
-    if (transactions.isEmpty) {
-      return 0;
-    }
-    return transactions.values
-        .expand((list) => list)
-        .map((e) => e.isIncome ? e.amount : -e.amount)
-        .reduce((value, element) => value + element);
+  static int calculateBalance(QueryResult queryResult) {
+    int output = 0;
+    queryResult.forEach((category, transactions) {
+      if (transactions.isEmpty) {
+        return;
+      }
+      int sum = transactions
+          .map((e) => e.amount)
+          .reduce((value, element) => value + element);
+      if (category.isIncome) {
+        output += sum;
+      } else {
+        output -= sum;
+      }
+    });
+    return output;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print("Build: HomeScrollSubpage(pageIndex: $pageIndex)");
+
     AsyncValue<QueryResult> queryResult = ref.watch(queryResultProvider(query));
     bool openDrawerInitially = ref.watch(
       appStateProvider.select(
@@ -36,7 +44,7 @@ class HomeScrollSubpage extends ConsumerWidget {
 
     return queryResult.when(
       data: (queryResult) {
-        double total = sum(queryResult) / 100;
+        double total = calculateBalance(queryResult) / 100;
         return Column(
           children: [
             _DebugArea(pageIndex: pageIndex, query: query),

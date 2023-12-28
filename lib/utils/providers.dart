@@ -77,6 +77,11 @@ final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(() {
 final dateExtentProvider = FutureProvider<DateTimeRange>((ref) async {
   AppDatabase database = ref.read(databaseProvider);
   return database.getDateExtent().getSingle().then(
-        (value) => DateTimeRange(start: value.minDate!, end: value.maxDate!),
-      );
+    (value) {
+      if (value.minDate == null || value.maxDate == null) {
+        return DateTimeRange(start: DateTime.now(), end: DateTime.now());
+      }
+      return DateTimeRange(start: value.minDate!, end: value.maxDate!);
+    },
+  );
 });

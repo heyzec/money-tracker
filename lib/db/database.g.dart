@@ -34,8 +34,15 @@ class Categories extends Table with TableInfo<Categories, Category> {
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _isIncomeMeta =
+      const VerificationMeta('isIncome');
+  late final GeneratedColumn<bool> isIncome = GeneratedColumn<bool>(
+      'isIncome', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   @override
-  List<GeneratedColumn> get $columns => [id, name, iconName, color];
+  List<GeneratedColumn> get $columns => [id, name, iconName, color, isIncome];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -67,6 +74,12 @@ class Categories extends Table with TableInfo<Categories, Category> {
     } else if (isInserting) {
       context.missing(_colorMeta);
     }
+    if (data.containsKey('isIncome')) {
+      context.handle(_isIncomeMeta,
+          isIncome.isAcceptableOrUnknown(data['isIncome']!, _isIncomeMeta));
+    } else if (isInserting) {
+      context.missing(_isIncomeMeta);
+    }
     return context;
   }
 
@@ -84,6 +97,8 @@ class Categories extends Table with TableInfo<Categories, Category> {
           .read(DriftSqlType.string, data['${effectivePrefix}iconName'])!,
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}color'])!,
+      isIncome: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}isIncome'])!,
     );
   }
 
@@ -104,11 +119,13 @@ class Category extends DataClass implements Insertable<Category> {
   /// color    TEXT NOT NULL MAPPED BY `const ColorConverter()`
   /// ColorConverter does not seem to work
   final int color;
+  final bool isIncome;
   const Category(
       {required this.id,
       required this.name,
       required this.iconName,
-      required this.color});
+      required this.color,
+      required this.isIncome});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -116,6 +133,7 @@ class Category extends DataClass implements Insertable<Category> {
     map['name'] = Variable<String>(name);
     map['iconName'] = Variable<String>(iconName);
     map['color'] = Variable<int>(color);
+    map['isIncome'] = Variable<bool>(isIncome);
     return map;
   }
 
@@ -125,6 +143,7 @@ class Category extends DataClass implements Insertable<Category> {
       name: Value(name),
       iconName: Value(iconName),
       color: Value(color),
+      isIncome: Value(isIncome),
     );
   }
 
@@ -136,6 +155,7 @@ class Category extends DataClass implements Insertable<Category> {
       name: serializer.fromJson<String>(json['name']),
       iconName: serializer.fromJson<String>(json['iconName']),
       color: serializer.fromJson<int>(json['color']),
+      isIncome: serializer.fromJson<bool>(json['isIncome']),
     );
   }
   @override
@@ -146,15 +166,22 @@ class Category extends DataClass implements Insertable<Category> {
       'name': serializer.toJson<String>(name),
       'iconName': serializer.toJson<String>(iconName),
       'color': serializer.toJson<int>(color),
+      'isIncome': serializer.toJson<bool>(isIncome),
     };
   }
 
-  Category copyWith({int? id, String? name, String? iconName, int? color}) =>
+  Category copyWith(
+          {int? id,
+          String? name,
+          String? iconName,
+          int? color,
+          bool? isIncome}) =>
       Category(
         id: id ?? this.id,
         name: name ?? this.name,
         iconName: iconName ?? this.iconName,
         color: color ?? this.color,
+        isIncome: isIncome ?? this.isIncome,
       );
   @override
   String toString() {
@@ -162,13 +189,14 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('iconName: $iconName, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('isIncome: $isIncome')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, iconName, color);
+  int get hashCode => Object.hash(id, name, iconName, color, isIncome);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -176,7 +204,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.id == this.id &&
           other.name == this.name &&
           other.iconName == this.iconName &&
-          other.color == this.color);
+          other.color == this.color &&
+          other.isIncome == this.isIncome);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
@@ -184,31 +213,37 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String> name;
   final Value<String> iconName;
   final Value<int> color;
+  final Value<bool> isIncome;
   const CategoriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.iconName = const Value.absent(),
     this.color = const Value.absent(),
+    this.isIncome = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String iconName,
     required int color,
+    required bool isIncome,
   })  : name = Value(name),
         iconName = Value(iconName),
-        color = Value(color);
+        color = Value(color),
+        isIncome = Value(isIncome);
   static Insertable<Category> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? iconName,
     Expression<int>? color,
+    Expression<bool>? isIncome,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (iconName != null) 'iconName': iconName,
       if (color != null) 'color': color,
+      if (isIncome != null) 'isIncome': isIncome,
     });
   }
 
@@ -216,12 +251,14 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       {Value<int>? id,
       Value<String>? name,
       Value<String>? iconName,
-      Value<int>? color}) {
+      Value<int>? color,
+      Value<bool>? isIncome}) {
     return CategoriesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       iconName: iconName ?? this.iconName,
       color: color ?? this.color,
+      isIncome: isIncome ?? this.isIncome,
     );
   }
 
@@ -240,6 +277,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (color.present) {
       map['color'] = Variable<int>(color.value);
     }
+    if (isIncome.present) {
+      map['isIncome'] = Variable<bool>(isIncome.value);
+    }
     return map;
   }
 
@@ -249,7 +289,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('iconName: $iconName, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('isIncome: $isIncome')
           ..write(')'))
         .toString();
   }
@@ -279,13 +320,6 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _isIncomeMeta =
-      const VerificationMeta('isIncome');
-  late final GeneratedColumn<bool> isIncome = GeneratedColumn<bool>(
-      'isIncome', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
   static const VerificationMeta _remarksMeta =
       const VerificationMeta('remarks');
   late final GeneratedColumn<String> remarks = GeneratedColumn<String>(
@@ -301,8 +335,7 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL REFERENCES categories(id)');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, date, amount, isIncome, remarks, category];
+  List<GeneratedColumn> get $columns => [id, date, amount, remarks, category];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -327,12 +360,6 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
           amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
     } else if (isInserting) {
       context.missing(_amountMeta);
-    }
-    if (data.containsKey('isIncome')) {
-      context.handle(_isIncomeMeta,
-          isIncome.isAcceptableOrUnknown(data['isIncome']!, _isIncomeMeta));
-    } else if (isInserting) {
-      context.missing(_isIncomeMeta);
     }
     if (data.containsKey('remarks')) {
       context.handle(_remarksMeta,
@@ -361,8 +388,6 @@ class Transactions extends Table with TableInfo<Transactions, Transaction> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}amount'])!,
-      isIncome: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}isIncome'])!,
       remarks: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}remarks'])!,
       category: attachedDatabase.typeMapping
@@ -383,14 +408,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final int id;
   final DateTime date;
   final int amount;
-  final bool isIncome;
   final String remarks;
   final int category;
   const Transaction(
       {required this.id,
       required this.date,
       required this.amount,
-      required this.isIncome,
       required this.remarks,
       required this.category});
   @override
@@ -399,7 +422,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['id'] = Variable<int>(id);
     map['date'] = Variable<DateTime>(date);
     map['amount'] = Variable<int>(amount);
-    map['isIncome'] = Variable<bool>(isIncome);
     map['remarks'] = Variable<String>(remarks);
     map['category'] = Variable<int>(category);
     return map;
@@ -410,7 +432,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       id: Value(id),
       date: Value(date),
       amount: Value(amount),
-      isIncome: Value(isIncome),
       remarks: Value(remarks),
       category: Value(category),
     );
@@ -423,7 +444,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       id: serializer.fromJson<int>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
       amount: serializer.fromJson<int>(json['amount']),
-      isIncome: serializer.fromJson<bool>(json['isIncome']),
       remarks: serializer.fromJson<String>(json['remarks']),
       category: serializer.fromJson<int>(json['category']),
     );
@@ -435,7 +455,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'id': serializer.toJson<int>(id),
       'date': serializer.toJson<DateTime>(date),
       'amount': serializer.toJson<int>(amount),
-      'isIncome': serializer.toJson<bool>(isIncome),
       'remarks': serializer.toJson<String>(remarks),
       'category': serializer.toJson<int>(category),
     };
@@ -445,14 +464,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           {int? id,
           DateTime? date,
           int? amount,
-          bool? isIncome,
           String? remarks,
           int? category}) =>
       Transaction(
         id: id ?? this.id,
         date: date ?? this.date,
         amount: amount ?? this.amount,
-        isIncome: isIncome ?? this.isIncome,
         remarks: remarks ?? this.remarks,
         category: category ?? this.category,
       );
@@ -462,7 +479,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('id: $id, ')
           ..write('date: $date, ')
           ..write('amount: $amount, ')
-          ..write('isIncome: $isIncome, ')
           ..write('remarks: $remarks, ')
           ..write('category: $category')
           ..write(')'))
@@ -470,8 +486,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, date, amount, isIncome, remarks, category);
+  int get hashCode => Object.hash(id, date, amount, remarks, category);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -479,7 +494,6 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.id == this.id &&
           other.date == this.date &&
           other.amount == this.amount &&
-          other.isIncome == this.isIncome &&
           other.remarks == this.remarks &&
           other.category == this.category);
 }
@@ -488,14 +502,12 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<int> id;
   final Value<DateTime> date;
   final Value<int> amount;
-  final Value<bool> isIncome;
   final Value<String> remarks;
   final Value<int> category;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
     this.amount = const Value.absent(),
-    this.isIncome = const Value.absent(),
     this.remarks = const Value.absent(),
     this.category = const Value.absent(),
   });
@@ -503,19 +515,16 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.id = const Value.absent(),
     required DateTime date,
     required int amount,
-    required bool isIncome,
     required String remarks,
     required int category,
   })  : date = Value(date),
         amount = Value(amount),
-        isIncome = Value(isIncome),
         remarks = Value(remarks),
         category = Value(category);
   static Insertable<Transaction> custom({
     Expression<int>? id,
     Expression<DateTime>? date,
     Expression<int>? amount,
-    Expression<bool>? isIncome,
     Expression<String>? remarks,
     Expression<int>? category,
   }) {
@@ -523,7 +532,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (id != null) 'id': id,
       if (date != null) 'date': date,
       if (amount != null) 'amount': amount,
-      if (isIncome != null) 'isIncome': isIncome,
       if (remarks != null) 'remarks': remarks,
       if (category != null) 'category': category,
     });
@@ -533,14 +541,12 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       {Value<int>? id,
       Value<DateTime>? date,
       Value<int>? amount,
-      Value<bool>? isIncome,
       Value<String>? remarks,
       Value<int>? category}) {
     return TransactionsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
       amount: amount ?? this.amount,
-      isIncome: isIncome ?? this.isIncome,
       remarks: remarks ?? this.remarks,
       category: category ?? this.category,
     );
@@ -558,9 +564,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (amount.present) {
       map['amount'] = Variable<int>(amount.value);
     }
-    if (isIncome.present) {
-      map['isIncome'] = Variable<bool>(isIncome.value);
-    }
     if (remarks.present) {
       map['remarks'] = Variable<String>(remarks.value);
     }
@@ -576,7 +579,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('id: $id, ')
           ..write('date: $date, ')
           ..write('amount: $amount, ')
-          ..write('isIncome: $isIncome, ')
           ..write('remarks: $remarks, ')
           ..write('category: $category')
           ..write(')'))
@@ -599,15 +601,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   Future<int> insertTransaction(
       {required DateTime date,
       required int amount,
-      required bool isIncome,
       required String remarks,
       required String categoryName}) {
     return customInsert(
-      'INSERT INTO transactions (date, amount, isIncome, remarks, category) VALUES (?1, ?2, ?3, ?4, (SELECT id FROM categories WHERE name == ?5))',
+      'INSERT INTO transactions (date, amount, remarks, category) VALUES (?1, ?2, ?3, (SELECT id FROM categories WHERE name == ?4))',
       variables: [
         Variable<DateTime>(date),
         Variable<int>(amount),
-        Variable<bool>(isIncome),
         Variable<String>(remarks),
         Variable<String>(categoryName)
       ],
@@ -647,13 +647,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   }
 
   Future<int> insertCategory(
-      {required String name, required String iconName, required int color}) {
+      {required String name,
+      required String iconName,
+      required int color,
+      required bool isIncome}) {
     return customInsert(
-      'INSERT INTO categories (name, iconName, color) VALUES (?1, ?2, ?3)',
+      'INSERT INTO categories (name, iconName, color, isIncome) VALUES (?1, ?2, ?3, ?4)',
       variables: [
         Variable<String>(name),
         Variable<String>(iconName),
-        Variable<int>(color)
+        Variable<int>(color),
+        Variable<bool>(isIncome)
       ],
       updates: {categories},
     );

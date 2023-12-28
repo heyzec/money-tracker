@@ -22,30 +22,80 @@ class CategoryViewPage extends ConsumerWidget {
           ),
           title: const Text('Categories'),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryAddPage((Category item) {
-                  ref.invalidate(categoriesProvider);
-                }),
+        floatingActionButton: PopupMenuButton(
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryAddPage(
+                        isIncome: true,
+                        onSubmit: (Category item) {
+                          ref.invalidate(categoriesProvider);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Text("Add income category"),
+              ),
+            ),
+            PopupMenuItem(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryAddPage(
+                        isIncome: false,
+                        onSubmit: (Category item) {
+                          ref.invalidate(categoriesProvider);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Text("Add expense category"),
+              ),
+            ),
+          ],
+          child: FloatingActionButton(
+            onPressed: null,
+            child: Icon(Icons.add),
+          ),
+        ),
+        body: categories.when(
+          data: (categories) {
+            List<Category> incomeCategories =
+                categories.where((category) => category.isIncome).toList();
+            List<Category> expenseCategories =
+                categories.where((category) => !category.isIncome).toList();
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DividerWithSubheader('Expense'),
+                  Expanded(
+                    child: CardsContainer(
+                      categories: expenseCategories,
+                      onSubmit: (Category item) {},
+                    ),
+                  ),
+                  DividerWithSubheader('Income'),
+                  Expanded(
+                    child: CardsContainer(
+                      categories: incomeCategories,
+                      onSubmit: (Category item) {},
+                    ),
+                  ),
+                ],
               ),
             );
           },
-          child: Icon(Icons.add),
-        ),
-        body: categories.when(
-          data: (data) => Column(
-            children: [
-              Expanded(
-                child: CardsContainer(
-                  categories: data,
-                  onSubmit: (Category item) {},
-                ),
-              ),
-            ],
-          ),
           loading: () => Center(child: CircularProgressIndicator()),
           error: (error, _) => Center(child: Text('Error: $error')),
         ),
@@ -55,6 +105,32 @@ class CategoryViewPage extends ConsumerWidget {
 
   Future<List<Category>> fetchCategories(AppDatabase database) async {
     return database.getCategories().get();
+  }
+}
+
+class DividerWithSubheader extends StatelessWidget {
+  final String text;
+  const DividerWithSubheader(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    // Adapted from https://api.flutter.dev/flutter/material/Divider-class.html
+    return Column(
+      children: [
+        Divider(),
+        Container(
+          padding: const EdgeInsets.only(left: 20),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.start,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

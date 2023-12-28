@@ -65,7 +65,8 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
             },
           ),
           title: Text(
-              "Add new category (${widget.isIncome ? 'income' : 'expense'})"),
+            "Add new category (${widget.isIncome ? 'income' : 'expense'})",
+          ),
           actions: [
             IconButton(
               onPressed: () {

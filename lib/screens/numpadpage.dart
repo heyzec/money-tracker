@@ -30,8 +30,8 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     await database.insertTransaction(
       date: date,
       amount: amount,
-      isIncome: widget.isIncome,
       remarks: _controller.text,
+      // TODO: Handle in the event of duplicate category name
       categoryName: selected!,
     );
 
@@ -149,7 +149,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                     );
                   },
                   child: showCategories
-                      ? SelectorWithDbItems(onCategorySelected)
+                      ? SelectorWithDbItems(onCategorySelected, widget.isIncome)
                       : NumpadLayout(
                           logic: logic,
                           onUpdate: (String newDisplay) {

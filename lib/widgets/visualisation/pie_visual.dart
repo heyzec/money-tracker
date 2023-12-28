@@ -32,10 +32,12 @@ class PieChartVisualisation extends ConsumerWidget {
     const int nCols = 4;
     const double pieRatio = 0.7;
 
-    List<PieSliceInfo> slices = generateSlices(data);
+    QueryResult filtered = filterData(data);
+
+    List<PieSliceInfo> slices = generateSlices(filtered);
 
     Map<Coord, Category> categoryMap =
-        assignCategoryToCoord(slices, data, nRows, nCols);
+        assignCategoryToCoord(slices, filtered, nRows, nCols);
 
     Map<Coord, (double, Color)> targets = categoryMap.map((key, value) {
       PieSliceInfo slice =
@@ -65,7 +67,8 @@ class PieChartVisualisation extends ConsumerWidget {
                   child: FractionallySizedBox(
                     widthFactor: pieRatio,
                     heightFactor: pieRatio,
-                    child: data.isEmpty ? Text("No Data") : PieChart(slices),
+                    child:
+                        filtered.isEmpty ? Text("No Data") : PieChart(slices),
                   ),
                 ),
               ),
@@ -82,6 +85,12 @@ class PieChartVisualisation extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  static QueryResult filterData(QueryResult data) {
+    QueryResult output = Map.from(data);
+    output.removeWhere((key, value) => key.isIncome);
+    return output;
   }
 
   static List<PieSliceInfo> generateSlices(QueryResult data) {
@@ -162,6 +171,7 @@ class _CategoryPercentContainer extends StatelessWidget {
         iconName: 'question',
         name: "",
         color: Colors.grey.value,
+        isIncome: false,
       ),
       percentage: 0,
     );
