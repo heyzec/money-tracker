@@ -15,7 +15,8 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(appStateProvider);
+    ref.watch(appStateProvider.select((appState) => appState.startDate));
+    ref.watch(appStateProvider.select((appState) => appState.period));
     if (_controller.hasClients) {
       // When QueryPrecursor updates, reset page index to 0
       _controller.jumpTo(0.0);

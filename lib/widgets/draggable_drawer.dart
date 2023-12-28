@@ -23,8 +23,6 @@ class DraggableDrawer extends StatefulWidget {
 class _DraggableDrawerState extends State<DraggableDrawer> {
   DraggableScrollableController controller = DraggableScrollableController();
 
-  double drawerSize = 0.0; // Invalid value for now
-
   double gestureStartLocalPosition = 0.0;
   double gestureStartSize = 0.0;
 
@@ -32,21 +30,17 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
   double gestureUpdateLocalPositionDebug = 0.0;
   double gestureEndVelocityDebug = 0.0;
 
+  bool isManuallyDragged = false;
+
   @override
   void initState() {
-    if (widget.openDrawerInitially) {
-      drawerSize = 1.0;
-    }
-
-    controller.addListener(() {
-      // Wrap setState in a future to delay it to the next tick.
-      // This avoids the "setState() or markNeedsBuild() called during build" error
-      Future.delayed(Duration.zero, () async {
-        setState(() {
-          drawerSize = controller.size;
-        });
-      });
-    });
+    // controller.addListener(() {
+    //   // Wrap setState in a future to delay it to the next tick.
+    //   // This avoids the "setState() or markNeedsBuild() called during build" error
+    //   Future.delayed(Duration.zero, () async {
+    //     print(controller.size);
+    //   });
+    // });
     super.initState();
   }
 
@@ -57,10 +51,19 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
         double drawerHeight = constraints.maxHeight;
         double drawerHandleSize = widget.handleHeight / drawerHeight;
 
+        if (controller.isAttached && !isManuallyDragged) {
+          // print("Updating a drawer state, ${widget.hashCode}");
+          if (widget.openDrawerInitially) {
+            openDrawer();
+          } else {
+            closeDrawer();
+          }
+        }
+
         return Stack(
           children: [
             Opacity(
-              opacity: controller.isAttached ? 1 - drawerSize : 1,
+              opacity: controller.isAttached ? controller.size : 1,
               child: SizedBox(
                 height: drawerHeight - widget.handleHeight,
                 child: Container(
@@ -138,6 +141,7 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
         setState(() {
           gestureStartLocalPosition = details.localPosition.dy;
           gestureStartSize = controller.size;
+          isManuallyDragged = true;
         });
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
@@ -160,10 +164,16 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
         double gestureEndVelocity = details.primaryVelocity ?? 0.0;
         if (gestureEndVelocity > thresholdVelocity) {
           closeDrawer(100);
+          setState(() {
+            isManuallyDragged = false;
+          });
           return;
         }
         if (gestureEndVelocity < -thresholdVelocity) {
           openDrawer(100);
+          setState(() {
+            isManuallyDragged = false;
+          });
           return;
         }
         double newSize = snapToValue(
@@ -176,10 +186,13 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
         double deltaSize = (newSize - controller.size).abs();
         int milliseconds = (deltaSize * 1000).toInt().clamp(100, 500);
         moveDrawerTo(newSize, milliseconds);
+        setState(() {
+          isManuallyDragged = false;
+        });
       },
       child: widget.buildDrawerHandle != null
           ? widget.buildDrawerHandle!(() {
-              if (drawerSize < 0.6) {
+              if (controller.size < 0.6) {
                 openDrawer();
               } else {
                 closeDrawer();

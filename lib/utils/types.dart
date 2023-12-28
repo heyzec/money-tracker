@@ -1,31 +1,50 @@
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/helpers.dart';
+import 'package:namer_app/utils/providers.dart';
 
 /// Immutable class that captures state of the object.
-/// To be accessed and modified via appStateProvider.
+/// To be accessed and modified via [appStateProvider].
 class AppState {
   final DateTime startDate;
   final Period period;
+  final bool isDrawerOpen;
 
   AppState({
     required this.startDate,
     required this.period,
+    required this.isDrawerOpen,
   });
 
   AppState copyWith({
     DateTime? startDate,
     Period? period,
+    bool? isDrawerOpen,
   }) {
     return AppState(
       startDate: startDate ?? this.startDate,
       period: period ?? this.period,
+      isDrawerOpen: isDrawerOpen ?? this.isDrawerOpen,
     );
+  }
+
+  @override
+  int get hashCode {
+    return combineHashes(combineHashes(startDate.hashCode, period.hashCode),
+        isDrawerOpen.hashCode);
   }
 
   @override
   String toString() {
     return "$period, $startDate";
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AppState &&
+        startDate == other.startDate &&
+        period == other.period &&
+        isDrawerOpen == other.isDrawerOpen;
   }
 }
 

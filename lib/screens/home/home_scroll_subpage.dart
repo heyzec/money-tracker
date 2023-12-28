@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
@@ -25,12 +26,15 @@ class HomeScrollSubpage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AppState appState = ref.watch(appStateProvider);
+    DateTime startDate =
+        ref.watch(appStateProvider.select((appState) => appState.startDate));
+    Period period =
+        ref.watch(appStateProvider.select((appState) => appState.period));
 
     Query query = Query.generateQuery(
       pageIndex: pageIndex,
-      startDate: appState.startDate,
-      period: appState.period,
+      startDate: startDate,
+      period: period,
     );
 
     AsyncValue<QueryResult> transactions =
@@ -41,6 +45,11 @@ class HomeScrollSubpage extends ConsumerWidget {
         var transactions = t;
         double total = sum(transactions) / 100;
         return DraggableDrawer(
+          openDrawerInitially: ref.watch(
+            appStateProvider.select(
+              (appState) => appState.isDrawerOpen,
+            ),
+          ),
           backgroundChild: PieChartVisualisation(transactions),
           buildDrawerHandle: (toggleDrawer) => Container(
             color: appBackgroundColor,
@@ -64,6 +73,14 @@ class HomeScrollSubpage extends ConsumerWidget {
                           ),
                         ),
                         onPressed: () {
+                          // TODO: Avoid this, will cause rebuild
+                          ref.read(appStateProvider.notifier).changeDrawerOpen(
+                                !ref.watch(
+                                  appStateProvider.select(
+                                    (appState) => appState.isDrawerOpen,
+                                  ),
+                                ),
+                              );
                           toggleDrawer();
                         },
                         child: Padding(
@@ -94,7 +111,7 @@ class HomeScrollSubpage extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text("Page Index: $pageIndex"),
-                        Text("Period: ${appState.period}"),
+                        Text("Period: ${period}"),
                         Text("Start: ${query.startDate}"),
                         Text("End: ${query.endDate}"),
                       ],

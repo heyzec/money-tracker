@@ -22,7 +22,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    AppState query = ref.watch(appStateProvider);
+    DateTime startDate = ref.watch(appStateProvider.select((appState) => appState.startDate));
+    Period period = ref.watch(appStateProvider.select((appState) => appState.period));
 
     return MaterialApp(
       home: Scaffold(
@@ -53,7 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         drawer: Padding(
           padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
-          child: Sidebar(query.period, (
+          child: Sidebar(period, (
             Period newPeriod, [
             DateTime? date,
           ]) {

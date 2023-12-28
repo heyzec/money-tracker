@@ -39,6 +39,7 @@ class AppStateNotifier extends Notifier<AppState> {
     return AppState(
       startDate: coerceToDay(DateTime.now()),
       period: Period.day,
+      isDrawerOpen: false,
     );
   }
 
@@ -52,6 +53,9 @@ class AppStateNotifier extends Notifier<AppState> {
     state = newState;
   }
 
+  void changeDrawerOpen(bool b) {
+    state = state.copyWith(isDrawerOpen: b);
+  }
 }
 
 final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(() {
