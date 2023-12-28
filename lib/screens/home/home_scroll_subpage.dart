@@ -4,8 +4,8 @@ import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
 import 'package:namer_app/widgets/draggable_drawer.dart';
-import 'package:namer_app/widgets/visualisation/pie_visual.dart';
-import 'package:namer_app/widgets/visualisation/table.dart';
+import 'package:namer_app/widgets/visualisation/list/list_visualisation.dart';
+import 'package:namer_app/widgets/visualisation/pie_chart/pie_chart_visualisation.dart';
 
 class HomeScrollSubpage extends ConsumerWidget {
   final int pageIndex;
@@ -110,7 +110,7 @@ class HomeScrollSubpage extends ConsumerWidget {
                   ),
                 ),
                 scrollableBuilder: (ScrollController scrollController) {
-                  return Breakdown(
+                  return ListVisualisation(
                     data: queryResult,
                     scrollController: scrollController,
                   );

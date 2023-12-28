@@ -1,6 +1,6 @@
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/helpers.dart';
+import 'package:namer_app/utils/functions.dart';
 import 'package:namer_app/utils/providers.dart';
 
 /// Immutable class that captures state of the object.

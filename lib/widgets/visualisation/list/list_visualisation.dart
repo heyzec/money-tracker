@@ -5,17 +5,17 @@ import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 
-class Breakdown extends ConsumerStatefulWidget {
+class ListVisualisation extends ConsumerStatefulWidget {
   final Map<Category, List<Transaction>> data;
   final ScrollController scrollController;
 
-  Breakdown({required this.data, required this.scrollController});
+  ListVisualisation({required this.data, required this.scrollController});
 
   @override
-  ConsumerState<Breakdown> createState() => _BreakdownState();
+  ConsumerState<ListVisualisation> createState() => _ListVisualisationState();
 }
 
-class _BreakdownState extends ConsumerState<Breakdown> {
+class _ListVisualisationState extends ConsumerState<ListVisualisation> {
   late Map<Category, List<Transaction>> grouped;
   late List<bool> expansionStates;
 
@@ -31,7 +31,7 @@ class _BreakdownState extends ConsumerState<Breakdown> {
   }
 
   @override
-  void didUpdateWidget(Breakdown oldWidget) {
+  void didUpdateWidget(ListVisualisation oldWidget) {
     super.didUpdateWidget(oldWidget);
     updateState();
   }

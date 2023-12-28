@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/screens/home/home_scroll_subpages.dart';
-import 'package:namer_app/screens/numpadpage.dart';
+import 'package:namer_app/screens/numpad_page.dart';
 import 'package:namer_app/screens/sandbox.dart';
-import 'package:namer_app/screens/settings/settings.dart';
+import 'package:namer_app/screens/settings/settings_page.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
