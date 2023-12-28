@@ -33,12 +33,9 @@ class PieChartVisualisation extends ConsumerWidget {
     const double pieRatio = 0.7;
 
     QueryResult filtered = filterData(data);
-
     List<PieSliceInfo> slices = generateSlices(filtered);
-
     Map<Coord, Category> categoryMap =
         assignCategoryToCoord(slices, filtered, nRows, nCols);
-
     Map<Coord, (double, Color)> targets = categoryMap.map((key, value) {
       PieSliceInfo slice =
           slices.firstWhere((slice) => slice.categoryName == value.name);
@@ -47,6 +44,13 @@ class PieChartVisualisation extends ConsumerWidget {
         (slice.startAngle + slice.sweepAngle / 2, slice.color),
       );
     });
+
+    // Add a fake slice so that we render an empty-looking pie chart
+    if (slices.isEmpty) {
+      slices = [
+        PieSliceInfo(startAngle: 0, sweepAngle: 360, color: Colors.grey),
+      ];
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -67,8 +71,7 @@ class PieChartVisualisation extends ConsumerWidget {
                   child: FractionallySizedBox(
                     widthFactor: pieRatio,
                     heightFactor: pieRatio,
-                    child:
-                        filtered.isEmpty ? Text("No Data") : PieChart(slices),
+                    child: PieChart(slices),
                   ),
                 ),
               ),
@@ -102,7 +105,6 @@ class PieChartVisualisation extends ConsumerWidget {
       key: (entry) => entry.key,
       value: (entry) {
         List<Transaction> transactions = entry.value;
-
         return transactions
             .map((t) => t.amount)
             .reduce((value, element) => value + element)

@@ -90,8 +90,14 @@ class _PieSliceBorder extends OutlinedBorder {
     final Path path = Path();
     final double centerX = rect.center.dx;
     final double centerY = rect.center.dy;
+    path.moveTo(centerX, centerY);
 
-    path.moveTo(centerX, centerY); // Move to the center of the circle
+    // Handle edge case, Path.arcTo will not draw anything if sweepAngle is 360
+    if (sweepAngle == 360) {
+      path.addOval(rect);
+      return path;
+    }
+
     path.lineTo(
       centerX + rect.width / 2 * cos(_degreesToRadians(startAngle)),
       centerY + rect.height / 2 * sin(_degreesToRadians(startAngle)),
@@ -101,7 +107,7 @@ class _PieSliceBorder extends OutlinedBorder {
       _degreesToRadians(startAngle),
       _degreesToRadians(sweepAngle),
       false,
-    ); // Arc representing the pie slice
+    );
     path.close();
 
     return path;
@@ -139,7 +145,7 @@ class _PieSliceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var pieSliceShape =
+    OutlinedBorder pieSliceShape =
         _PieSliceBorder(startAngle: startAngle, sweepAngle: sweepAngle);
     return Material(
       color: color,

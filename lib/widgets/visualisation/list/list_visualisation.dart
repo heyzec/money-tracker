@@ -4,37 +4,13 @@ import 'package:line_icons/line_icons.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
+import 'package:namer_app/utils/types.dart';
 
-class ListVisualisation extends ConsumerStatefulWidget {
-  final Map<Category, List<Transaction>> data;
+class ListVisualisation extends ConsumerWidget {
+  final QueryResult data;
   final ScrollController scrollController;
 
   ListVisualisation({required this.data, required this.scrollController});
-
-  @override
-  ConsumerState<ListVisualisation> createState() => _ListVisualisationState();
-}
-
-class _ListVisualisationState extends ConsumerState<ListVisualisation> {
-  late Map<Category, List<Transaction>> grouped;
-  late List<bool> expansionStates;
-
-  void updateState() {
-    grouped = widget.data;
-    expansionStates = [for (int i = 0; i < grouped.length; i++) false];
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    updateState();
-  }
-
-  @override
-  void didUpdateWidget(ListVisualisation oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    updateState();
-  }
 
   ExpansionTile buildPanel(Category category, List<Transaction> transactions) {
     double total =
@@ -115,16 +91,32 @@ class _ListVisualisationState extends ConsumerState<ListVisualisation> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var categories = ref.watch(categoriesProvider);
+
+    if (data.isEmpty) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) =>
+            SingleChildScrollView(
+          controller: scrollController,
+          child: SizedBox(
+            width: viewportConstraints.maxWidth,
+            height: viewportConstraints.maxHeight,
+            child: Center(
+              child: Text("There are no records for this period yet"),
+            ),
+          ),
+        ),
+      );
+    }
 
     return categories.when(
       data: (categories) {
         return ListView(
-          controller: widget.scrollController,
+          controller: scrollController,
           children: () {
             List<ExpansionTile> panels = [];
-            for (var entry in grouped.entries) {
+            for (var entry in data.entries) {
               List<Transaction> transactions = entry.value;
               Category category =
                   categories.firstWhere((c) => c.id == entry.key.id);

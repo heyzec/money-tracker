@@ -77,14 +77,8 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
               period: period,
             );
 
-            return Container(
+            return SizedBox(
               width: viewportWidth,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blue,
-                  width: 1.0,
-                ),
-              ),
               child: HomeScrollSubpage(pageIndex: index, query: query),
             );
           },

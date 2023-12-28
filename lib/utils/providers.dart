@@ -75,6 +75,7 @@ final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(() {
 });
 
 final dateExtentProvider = FutureProvider<DateTimeRange>((ref) async {
+  // TODO: Fix provider not updating
   AppDatabase database = ref.read(databaseProvider);
   return database.getDateExtent().getSingle().then(
     (value) {

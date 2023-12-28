@@ -138,27 +138,34 @@ class _DebugArea extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AppState state = ref.watch(appStateProvider);
-    return DefaultTextStyle(
-      style: TextStyle(fontSize: 15, color: Colors.black),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Page Index: $pageIndex"),
-              Text("Start: ${query.startDate}"),
-              Text("End: ${query.endDate}"),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Period: ${state.period}"),
-              Text("StartDate: ${state.startDate}"),
-              Text("IsDrawerOpen: ${state.isDrawerOpen}"),
-            ],
-          ),
-        ],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: DefaultTextStyle(
+        style: TextStyle(fontSize: 15, color: Colors.black),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Page Index: $pageIndex"),
+                SizedBox(width: 20),
+                Text("Start: ${query.startDate}"),
+                SizedBox(width: 20),
+                Text("End: ${query.endDate}"),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Period: ${state.period}"),
+                SizedBox(width: 20),
+                Text("StartDate: ${state.startDate}"),
+                SizedBox(width: 20),
+                Text("IsDrawerOpen: ${state.isDrawerOpen}"),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
