@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/functions.dart';
 
@@ -46,7 +48,19 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
   double gestureStartLocalPosition = 0.0;
   double gestureStartSize = 0.0;
+  /// For drawer to ignore `openHandle` when manually dragged
   bool isManuallyDragged = false;
+
+  // To change shadow opacity without using setState to avoid rebuilding entire tree
+  final StreamController<double> opacityController = StreamController<double>();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      opacityController.add(controller.size);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,22 +85,30 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
         return Stack(
           children: [
-            Opacity(
-              opacity: () {
-                // 0 means hide background, 1 means show background
-                if (isManuallyDragged) {
-                  return 1 - controller.size.toDouble();
-                }
-                return widget.openDrawer ? 0.0 : 1.0;
-              }(),
-              child: SizedBox(
-                height: drawerHeight - widget.handleHeight,
-                child: Container(
-                  alignment: Alignment.center,
-                  color: Colors.yellow[50],
+            Stack(
+              children: [
+                SizedBox(
+                  height: drawerHeight - widget.handleHeight,
                   child: widget.backgroundChild,
                 ),
-              ),
+                StreamBuilder<double>(
+                  stream: opacityController.stream,
+                  builder: (context, snapshot) {
+                    double opacity;
+                    if (snapshot.hasData) {
+                      double size = snapshot.data!;
+                      opacity =
+                          (size - drawerHandleSize) / (1 - drawerHandleSize);
+                    } else {
+                      opacity = widget.openDrawer ? 1.0 : 0.0;
+                    }
+                    return Opacity(
+                      opacity: opacity,
+                      child: Container(color: Colors.black.withOpacity(0.5)),
+                    );
+                  },
+                ),
+              ],
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -94,7 +116,7 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
                 height: drawerHeight,
                 child: DraggableScrollableSheet(
                   snap: true,
-                  initialChildSize: drawerHandleSize,
+                  initialChildSize: widget.openDrawer ? 1.0 : drawerHandleSize,
                   minChildSize: drawerHandleSize,
                   maxChildSize: 1.0,
                   controller: controller,

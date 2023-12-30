@@ -86,7 +86,7 @@ class HomeScrollSubpage extends ConsumerWidget {
                                     ),
                                   ),
                                 );
-                            toggleDrawer();
+                            // toggleDrawer();
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -110,9 +110,12 @@ class HomeScrollSubpage extends ConsumerWidget {
                   ),
                 ),
                 scrollableBuilder: (ScrollController scrollController) {
-                  return ListVisualisation(
-                    data: queryResult,
-                    scrollController: scrollController,
+                  return Container(
+                    color: Colors.white,
+                    child: ListVisualisation(
+                      data: queryResult,
+                      scrollController: scrollController,
+                    ),
                   );
                 },
               ),

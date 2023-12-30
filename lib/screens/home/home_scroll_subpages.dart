@@ -13,9 +13,8 @@ class HomeScrollSubpages extends ConsumerStatefulWidget {
 
 class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
   int? currentPageIndex;
-  PageController pageController= PageController();
-  ScrollController scrollController= ScrollController();
-
+  PageController pageController = PageController();
+  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
