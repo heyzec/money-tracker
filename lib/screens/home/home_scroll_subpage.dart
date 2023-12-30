@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/styling.dart';
 import 'package:namer_app/utils/types.dart';
@@ -44,7 +45,7 @@ class HomeScrollSubpage extends ConsumerWidget {
 
     return queryResult.when(
       data: (queryResult) {
-        double total = calculateBalance(queryResult) / 100;
+        int total = calculateBalance(queryResult);
         return Column(
           children: [
             _DebugArea(pageIndex: pageIndex, query: query),
@@ -93,8 +94,15 @@ class HomeScrollSubpage extends ConsumerWidget {
                               horizontal: 10,
                               vertical: 5,
                             ),
-                            child: Text(
-                              "Balance ${total.isNegative ? "-" : ""}\$${total.abs()}",
+                            child: Row(
+                              children: [
+                                Text("Balance"),
+                                SizedBox(width: 5),
+                                displayMonetaryAmount(
+                                  total,
+                                  addLeadingMinusBySign: true,
+                                ),
+                              ],
                             ),
                           ),
                         ),

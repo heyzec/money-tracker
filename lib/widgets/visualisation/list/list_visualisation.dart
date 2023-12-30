@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
+import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/types.dart';
 
@@ -13,8 +14,7 @@ class ListVisualisation extends ConsumerWidget {
   ListVisualisation({required this.data, required this.scrollController});
 
   ExpansionTile buildPanel(Category category, List<Transaction> transactions) {
-    double total =
-        transactions.map((t) => t.amount).reduce((a, b) => a + b) / 100;
+    int total = transactions.map((t) => t.amount).reduce((a, b) => a + b);
     Color categoryColor = Color(category.color);
 
     return ExpansionTile(
@@ -52,39 +52,40 @@ class ListVisualisation extends ConsumerWidget {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: Text(
-              '\$$total',
+            child: DefaultTextStyle.merge(
               style: TextStyle(
-                color: Colors.red,
+                color: category.isIncome ? Colors.green : Colors.red,
               ),
+              child: displayMonetaryAmount(total),
             ),
           ),
         ],
       ),
       children: [
         Column(
-          children: transactions
-              .map(
-                (t) => ListTile(
-                  title: Stack(
-                    children: [
-                      Text(
-                        '\$${t.amount / 100} - ${t.remarks}',
+          children: transactions.map(
+            (t) {
+              return ListTile(
+                title: Stack(
+                  children: [
+                    Row(
+                      children: [
+                        displayMonetaryAmount(t.amount),
+                        Text(t.remarks.isNotEmpty ? " - ${t.remarks}" : ""),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Tooltip(
+                        message: "Debug: ${t.date}",
+                        child: Text(dateTimeToStringShort(t.date)),
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Tooltip(
-                          message: "Debug: ${t.date}",
-                          child: Text(
-                            dateTimeToStringShort(t.date),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-              .toList(),
+              );
+            },
+          ).toList(),
         ),
       ],
     );
