@@ -12,14 +12,14 @@ class HomeScrollSubpages extends ConsumerStatefulWidget {
 }
 
 class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
-  late int currentPageIndex;
+  int? currentPageIndex;
+  PageController pageController= PageController();
+  ScrollController scrollController= ScrollController();
+
 
   @override
   Widget build(BuildContext context) {
     print("Build: HomeScrollSubpages()");
-
-    // TODO: Consider making all pages have the same controller instance
-    PageController? controller;
 
     // Use read() to not trigger rebuild when start date alone changes
     DateTime startDate =
@@ -29,59 +29,102 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
 
     double viewportWidth = MediaQuery.of(context).size.width;
 
+    const double headerRatio = 0.5;
+
+    double translate(pageControllerOffset) {
+      double scaled = pageControllerOffset * headerRatio;
+      // (w-rw)/2 is the size of remaining space, we minus this amount
+      // wr is the size of one more page, we need to shift indexes by 1 because ListView cannot render -1th page
+      double offset = viewportWidth * ((3 * headerRatio - 1) / 2);
+      double scrollControllerOffset = scaled + offset;
+      return scrollControllerOffset;
+    }
+
     var dateExtent = ref.watch(dateExtentProvider);
-
-    DateTime maxForDates(DateTime date1, DateTime date2) =>
-        date1.isAfter(date2) ? date1 : date2;
-
     return dateExtent.when(
       data: (dateExtent) {
         int initialPageIndex = period.countPeriods(startDate, dateExtent.start);
-        if (controller == null) {
-          // print("Creating new controller with index: $initialPageIndex");
-          controller = PageController(initialPage: initialPageIndex);
-          currentPageIndex = initialPageIndex;
-        } else {}
-        // print("jump to $initialPageIndex");
-        // _controller!.onAttach!(() {});
+        if (currentPageIndex != null && currentPageIndex == initialPageIndex) {
+          // Rebuild not caused by changing of periods.
+        } else {
+          // Rebuild caused by changing of periods.
+          Future(() {
+            pageController.jumpToPage(initialPageIndex);
+            scrollController.jumpTo(translate(pageController.offset));
+          });
+          setState(() {
+            currentPageIndex = initialPageIndex;
+          });
+        }
+        if (!pageController.hasClients) {
+          pageController.addListener(() {
+            // controller2!.animateTo(offset, duration: Duration(milliseconds: 50), curve: Curves.linear);
+            scrollController.jumpTo(translate(pageController.offset));
+          });
+        }
 
-        DateTime temp = maxForDates(dateExtent.end, DateTime.now());
         int lastPageIndex = period.countPeriods(
-          temp,
+          maxForDates(dateExtent.end, DateTime.now()),
           dateExtent.start,
         );
         // Seems that this PageView will be cached by Flutter on rebuilds
         // even when the itemCount changes
-        return PageView.builder(
-          allowImplicitScrolling: true,
-          itemCount: lastPageIndex + 1,
-          scrollDirection: Axis.horizontal,
-          controller: controller,
-          onPageChanged: (newIndex) {
-            Future(() {
-              if (newIndex > currentPageIndex) {
-                ref.read(appStateProvider.notifier).increment();
-              }
-              if (newIndex < currentPageIndex) {
-                ref.read(appStateProvider.notifier).decrement();
-              }
-              setState(() {
-                currentPageIndex = newIndex;
-              });
-            });
-          },
-          itemBuilder: (context, index) {
-            Query query = Query.generateQuery(
-              pageIndex: index,
-              baseDate: period.coerceDate(dateExtent.start),
-              period: period,
-            );
-
-            return SizedBox(
+        return Column(
+          children: [
+            SizedBox(
               width: viewportWidth,
-              child: HomeScrollSubpage(pageIndex: index, query: query),
-            );
-          },
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: lastPageIndex + 3,
+                controller: scrollController,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    width: viewportWidth * headerRatio,
+                    child: (index == 0 || index == lastPageIndex + 2)
+                        ? Container(color: Colors.black)
+                        : Container(
+                            color: Colors.red[index * 100 + 100],
+                            child: Text((index - 1).toString()),
+                          ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: PageView.builder(
+                allowImplicitScrolling: true,
+                itemCount: lastPageIndex + 1,
+                scrollDirection: Axis.horizontal,
+                controller: pageController,
+                onPageChanged: (newIndex) {
+                  Future(() {
+                    if (newIndex > currentPageIndex!) {
+                      ref.read(appStateProvider.notifier).increment();
+                    }
+                    if (newIndex < currentPageIndex!) {
+                      ref.read(appStateProvider.notifier).decrement();
+                    }
+                    setState(() {
+                      currentPageIndex = newIndex;
+                    });
+                  });
+                },
+                itemBuilder: (context, index) {
+                  Query query = Query.generateQuery(
+                    pageIndex: index,
+                    baseDate: period.coerceDate(dateExtent.start),
+                    period: period,
+                  );
+
+                  return SizedBox(
+                    width: viewportWidth,
+                    child: HomeScrollSubpage(pageIndex: index, query: query),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
       error: (_, __) => Placeholder(),

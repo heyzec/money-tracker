@@ -189,3 +189,6 @@ DateTime incrementDay(DateTime date, [int amount = 1]) {
 DateTime decrementDay(DateTime date, [int amount = 1]) {
   return incrementDay(date, -amount);
 }
+
+DateTime maxForDates(DateTime date1, DateTime date2) =>
+    date1.isAfter(date2) ? date1 : date2;
