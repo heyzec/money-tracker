@@ -25,10 +25,12 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
         ref.read(appStateProvider.select((appState) => appState.startDate));
     Period period =
         ref.watch(appStateProvider.select((appState) => appState.period));
+    var dateExtent = ref.watch(dateExtentProvider);
 
     double viewportWidth = MediaQuery.of(context).size.width;
-
     const double headerRatio = 0.5;
+    const double headerItemHeight = 50;
+    double headerItemWidth = viewportWidth * headerRatio;
 
     double translate(pageControllerOffset) {
       double scaled = pageControllerOffset * headerRatio;
@@ -39,7 +41,6 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
       return scrollControllerOffset;
     }
 
-    var dateExtent = ref.watch(dateExtentProvider);
     return dateExtent.when(
       data: (dateExtent) {
         int initialPageIndex = period.countPeriods(startDate, dateExtent.start);
@@ -66,25 +67,43 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
           maxForDates(dateExtent.end, DateTime.now()),
           dateExtent.start,
         );
+
         // Seems that this PageView will be cached by Flutter on rebuilds
         // even when the itemCount changes
         return Column(
           children: [
             SizedBox(
               width: viewportWidth,
-              height: 200,
+              height: headerItemHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: lastPageIndex + 3,
                 controller: scrollController,
-                itemBuilder: (context, index) {
+                itemExtent: headerItemWidth,
+                itemBuilder: (context, shiftedIndex) {
+                  int index = shiftedIndex - 1;
+                  if (shiftedIndex == 0 || shiftedIndex == lastPageIndex + 2) {
+                    return Container(color: Colors.black);
+                  }
+
+                  Query query = Query.generateQuery(
+                    pageIndex: index,
+                    baseDate: period.coerceDate(dateExtent.start),
+                    period: period,
+                  );
+                  String formatted = period.formatDateRange(
+                    query.startDate,
+                    query.endDate,
+                  );
                   return SizedBox(
-                    width: viewportWidth * headerRatio,
-                    child: (index == 0 || index == lastPageIndex + 2)
-                        ? Container(color: Colors.black)
-                        : Container(
-                            color: Colors.red[index * 100 + 100],
-                            child: Text((index - 1).toString()),
+                    width: headerItemWidth,
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: Text(
+                        formatted,
+                        textScaleFactor: 2,
+                      ),
                           ),
                   );
                 },
