@@ -219,7 +219,7 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
                 closeDrawer();
               }
             })
-          : Container(color: Colors.orange),
+          : Container(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
+import 'package:namer_app/utils/theme.dart';
 import 'package:namer_app/utils/types.dart';
 
 class ListVisualisation extends ConsumerWidget {
@@ -13,7 +14,11 @@ class ListVisualisation extends ConsumerWidget {
 
   ListVisualisation({required this.data, required this.scrollController});
 
-  ExpansionTile buildPanel(Category category, List<Transaction> transactions) {
+  ExpansionTile buildPanel(
+    Category category,
+    List<Transaction> transactions,
+    BuildContext context,
+  ) {
     int total = transactions.map((t) => t.amount).reduce((a, b) => a + b);
     Color categoryColor = Color(category.color);
 
@@ -54,7 +59,11 @@ class ListVisualisation extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: DefaultTextStyle.merge(
               style: TextStyle(
-                color: category.isIncome ? Colors.green : Colors.red,
+                color: category.isIncome
+                    ? Theme.of(context).extension<AppExtraColors>()!.incomeColor
+                    : Theme.of(context)
+                        .extension<AppExtraColors>()!
+                        .expenseColor,
               ),
               child: displayMonetaryAmount(total),
             ),
@@ -122,7 +131,7 @@ class ListVisualisation extends ConsumerWidget {
               Category category =
                   categories.firstWhere((c) => c.id == entry.key.id);
 
-              panels.add(buildPanel(category, transactions));
+              panels.add(buildPanel(category, transactions, context));
             }
             return panels;
           }(),

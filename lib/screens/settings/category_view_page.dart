@@ -10,95 +10,93 @@ class CategoryViewPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var categories = ref.watch(categoriesProvider);
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            tooltip: 'Back',
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text('Categories'),
-        ),
-        floatingActionButton: PopupMenuButton(
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CategoryAddPage(
-                        isIncome: true,
-                        onSubmit: (Category item) {
-                          ref.invalidate(categoriesProvider);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                child: Text("Add income category"),
-              ),
-            ),
-            PopupMenuItem(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CategoryAddPage(
-                        isIncome: false,
-                        onSubmit: (Category item) {
-                          ref.invalidate(categoriesProvider);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                child: Text("Add expense category"),
-              ),
-            ),
-          ],
-          child: FloatingActionButton(
-            onPressed: null,
-            child: Icon(Icons.add),
-          ),
-        ),
-        body: categories.when(
-          data: (categories) {
-            List<Category> incomeCategories =
-                categories.where((category) => category.isIncome).toList();
-            List<Category> expenseCategories =
-                categories.where((category) => !category.isIncome).toList();
-
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DividerWithSubheader('Expense'),
-                  Expanded(
-                    child: CardsContainer(
-                      categories: expenseCategories,
-                      onSubmit: (Category item) {},
-                    ),
-                  ),
-                  DividerWithSubheader('Income'),
-                  Expanded(
-                    child: CardsContainer(
-                      categories: incomeCategories,
-                      onSubmit: (Category item) {},
-                    ),
-                  ),
-                ],
-              ),
-            );
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
+          onPressed: () {
+            Navigator.pop(context);
           },
-          loading: () => Center(child: CircularProgressIndicator()),
-          error: (error, _) => Center(child: Text('Error: $error')),
         ),
+        title: const Text('Categories'),
+      ),
+      floatingActionButton: PopupMenuButton(
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryAddPage(
+                      isIncome: true,
+                      onSubmit: (Category item) {
+                        ref.invalidate(categoriesProvider);
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: Text("Add income category"),
+            ),
+          ),
+          PopupMenuItem(
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryAddPage(
+                      isIncome: false,
+                      onSubmit: (Category item) {
+                        ref.invalidate(categoriesProvider);
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: Text("Add expense category"),
+            ),
+          ),
+        ],
+        child: FloatingActionButton(
+          onPressed: null,
+          child: Icon(Icons.add),
+        ),
+      ),
+      body: categories.when(
+        data: (categories) {
+          List<Category> incomeCategories =
+              categories.where((category) => category.isIncome).toList();
+          List<Category> expenseCategories =
+              categories.where((category) => !category.isIncome).toList();
+
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                DividerWithSubheader('Expense'),
+                Expanded(
+                  child: CardsContainer(
+                    categories: expenseCategories,
+                    onSubmit: (Category item) {},
+                  ),
+                ),
+                DividerWithSubheader('Income'),
+                Expanded(
+                  child: CardsContainer(
+                    categories: incomeCategories,
+                    onSubmit: (Category item) {},
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Error: $error')),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/styling.dart';
+import 'package:namer_app/utils/theme.dart';
 import 'package:namer_app/utils/types.dart';
 import 'package:namer_app/widgets/draggable_drawer.dart';
 import 'package:namer_app/widgets/visualisation/list/list_visualisation.dart';
@@ -57,69 +57,75 @@ class HomeScrollSubpage extends ConsumerWidget {
                 onUpdate: (b) {
                   ref.read(appStateProvider.notifier).changeDrawerOpen(b);
                 },
-                buildDrawerHandle: (toggleDrawer) => Container(
-                  color: appBackgroundColor,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.drag_handle,
-                            color: Colors.green,
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: appRoundedButtonStyle.copyWith(
-                            backgroundColor: MaterialStatePropertyAll(
-                              total >= 0 ? appIncomeColor : appExpenseColor,
-                            ),
-                          ),
-                          onPressed: () {
-                            // TODO: Avoid this, will cause rebuild
-                            ref
-                                .read(appStateProvider.notifier)
-                                .changeDrawerOpen(
-                                  !ref.watch(
-                                    appStateProvider.select(
-                                      (appState) => appState.isDrawerOpen,
-                                    ),
-                                  ),
-                                );
-                            // toggleDrawer();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            child: Row(
-                              children: [
-                                Text("Balance"),
-                                SizedBox(width: 5),
-                                displayMonetaryAmount(
-                                  total,
-                                  addLeadingMinusBySign: true,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.drag_handle,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
+                buildDrawerHandle: (toggleDrawer) {
+                  Widget dragHandle = Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.drag_handle,
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
-                  ),
-                ),
+                  );
+                  Widget balanceButton = ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        total.isNegative
+                            ? Theme.of(context)
+                                .extension<AppExtraColors>()!
+                                .expenseColor
+                            : Theme.of(context)
+                                .extension<AppExtraColors>()!
+                                .incomeColor,
+                      ),
+                    ),
+                    onPressed: () {
+                      // TODO: Avoid this, will cause rebuild
+                      ref.read(appStateProvider.notifier).changeDrawerOpen(
+                            !ref.watch(
+                              appStateProvider.select(
+                                (appState) => appState.isDrawerOpen,
+                              ),
+                            ),
+                          );
+                      // toggleDrawer();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: DefaultTextStyle.merge(
+                        style: TextStyle(color: Colors.white),
+                        child: Row(
+                          children: [
+                            Text("Balance"),
+                            SizedBox(width: 5),
+                            displayMonetaryAmount(
+                              total,
+                              addLeadingMinusBySign: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+
+                  return Container(
+                    color: Theme.of(context).colorScheme.background,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          dragHandle,
+                          balanceButton,
+                          dragHandle,
+                        ],
+                      ),
+                    ),
+                  );
+                },
                 scrollableBuilder: (ScrollController scrollController) {
                   return Container(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.background,
                     child: ListVisualisation(
                       data: queryResult,
                       scrollController: scrollController,

@@ -6,7 +6,7 @@ import 'package:namer_app/screens/sandbox.dart';
 import 'package:namer_app/screens/settings/settings_page.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/styling.dart';
+import 'package:namer_app/utils/theme.dart';
 
 import 'package:namer_app/widgets/sidebar.dart';
 
@@ -26,66 +26,64 @@ class _HomePageState extends ConsumerState<HomePage> {
     Period period =
         ref.watch(appStateProvider.select((appState) => appState.period));
 
-    return MaterialApp(
-      home: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: const Text('Home'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.face),
-              tooltip: 'Sandbox',
-              onPressed: () {
-                setState(() {
-                  _showSandbox = !_showSandbox;
-                });
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Setting Icon',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
-                );
-              },
-            ),
-          ],
-        ),
-        drawer: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
-          child: Sidebar(period, (
-            Period newPeriod, [
-            DateTime? date,
-          ]) {
-            ref.read(appStateProvider.notifier).changePeriod(newPeriod, date);
-            _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
-          }),
-        ),
-        body: _showSandbox
-            ? Sandbox()
-            : Column(
-                children: [
-                  Expanded(child: HomeScrollSubpages()),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.all(16.0),
-                          child: HomeEntryButton(false),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(16.0),
-                          child: HomeEntryButton(true),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.face),
+            tooltip: 'Sandbox',
+            onPressed: () {
+              setState(() {
+                _showSandbox = !_showSandbox;
+              });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Setting Icon',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+          ),
+        ],
       ),
+      drawer: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
+        child: Sidebar(period, (
+          Period newPeriod, [
+          DateTime? date,
+        ]) {
+          ref.read(appStateProvider.notifier).changePeriod(newPeriod, date);
+          _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
+        }),
+      ),
+      body: _showSandbox
+          ? Sandbox()
+          : Column(
+              children: [
+                Expanded(child: HomeScrollSubpages()),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(16.0),
+                        child: HomeEntryButton(false),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(16.0),
+                        child: HomeEntryButton(true),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }
@@ -97,7 +95,9 @@ class HomeEntryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = isIncome ? appIncomeColor : appExpenseColor;
+    Color color = isIncome
+        ? Theme.of(context).extension<AppExtraColors>()!.incomeColor
+        : Theme.of(context).extension<AppExtraColors>()!.expenseColor;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: CircleBorder(),

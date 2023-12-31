@@ -70,112 +70,123 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            tooltip: 'Back',
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(widget.isIncome ? "New income" : "New expense"),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextButton.icon(
-                onPressed: onDatePressed,
-                icon: Icon(Icons.calendar_month),
-                label: Text(dateTimeToStringLong(date)),
-              ),
-              Card(
-                color: Colors.lightGreen[200],
-                child: IntrinsicHeight(
-                  child: Stack(
-                    children: [
-                      Align(
-                        child: Text(display, textScaleFactor: 5),
+        title: Text(widget.isIncome ? "New income" : "New expense"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextButton.icon(
+              onPressed: onDatePressed,
+              icon: Icon(Icons.calendar_month),
+              label: Text(dateTimeToStringLong(date)),
+            ),
+            Card(
+              color: Theme.of(context).colorScheme.primary,
+              child: IntrinsicHeight(
+                child: Stack(
+                  children: [
+                    Align(
+                      child: Text(
+                        display,
+                        textScaleFactor: 5,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: const Icon(Icons.backspace),
-                          tooltip: 'Backspace',
-                          onPressed: onBackspacePressed,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.backspace,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        tooltip: 'Backspace',
+                        onPressed: onBackspacePressed,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            TextFormField(
+              controller: _controller,
+              decoration: InputDecoration(labelText: 'Note'),
+            ),
+            Expanded(
+              flex: 4,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  const begin = Offset(0.0, 1.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOut;
+
+                  var slideTransition = Tween(begin: begin, end: end).animate(
+                    CurvedAnimation(parent: animation, curve: curve),
+                  );
+
+                  return Stack(
+                    children: [
+                      // // Outgoing widget with fade-out effect
+                      // FadeTransition(
+                      //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+                      //   child: child,
+                      // ),
+                      // Incoming widget sliding in from the bottom
+                      SlideTransition(
+                        position: slideTransition,
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
                         ),
                       ),
                     ],
+                  );
+                },
+                child: showCategories
+                    ? SelectorWithDbItems(onCategorySelected, widget.isIncome)
+                    : NumpadLayout(
+                        logic: logic,
+                        onUpdate: (String newDisplay) {
+                          setState(() {
+                            display = newDisplay;
+                          });
+                        },
+                      ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Expanded(
+              flex: 1,
+              child: SizedBox(
+                child: OutlinedButton(
+                  child: Text(
+                    "Select Category",
+                    //   style: TextStyle(
+                    //     color: Theme.of(context).colorScheme.tertiary,
+                    //   ),
                   ),
-                ),
-              ),
-              TextFormField(
-                controller: _controller,
-                decoration: InputDecoration(labelText: 'Note'),
-              ),
-              Expanded(
-                flex: 4,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    const begin = Offset(0.0, 1.0);
-                    const end = Offset.zero;
-                    const curve = Curves.easeInOut;
-
-                    var slideTransition = Tween(begin: begin, end: end).animate(
-                      CurvedAnimation(parent: animation, curve: curve),
-                    );
-
-                    return Stack(
-                      children: [
-                        // // Outgoing widget with fade-out effect
-                        // FadeTransition(
-                        //   opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
-                        //   child: child,
-                        // ),
-                        // Incoming widget sliding in from the bottom
-                        SlideTransition(
-                          position: slideTransition,
-                          child: FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
-                        ),
-                      ],
-                    );
+                  onPressed: () {
+                    setState(() {
+                      showCategories = !showCategories;
+                    });
                   },
-                  child: showCategories
-                      ? SelectorWithDbItems(onCategorySelected, widget.isIncome)
-                      : NumpadLayout(
-                          logic: logic,
-                          onUpdate: (String newDisplay) {
-                            setState(() {
-                              display = newDisplay;
-                            });
-                          },
-                        ),
                 ),
               ),
-              SizedBox(height: 10),
-              Expanded(
-                flex: 1,
-                child: SizedBox(
-                  child: OutlinedButton(
-                    child: Text("Select Category"),
-                    onPressed: () {
-                      setState(() {
-                        showCategories = !showCategories;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

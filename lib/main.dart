@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:namer_app/utils/theme.dart';
 // import 'package:noob/noob.dart';
 
 import 'screens/home/home_page.dart';
@@ -33,12 +34,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const appName = 'Money Tracker';
+
     return MaterialApp(
-      title: 'Namer App',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-      ),
+      title: appName,
+      theme: appThemeData,
       home: HomePage(),
     );
   }

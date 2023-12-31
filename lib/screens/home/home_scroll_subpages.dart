@@ -83,7 +83,7 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
                 itemBuilder: (context, shiftedIndex) {
                   int index = shiftedIndex - 1;
                   if (shiftedIndex == 0 || shiftedIndex == lastPageIndex + 2) {
-                    return Container(color: Colors.black);
+                    return Container();
                   }
 
                   Query query = Query.generateQuery(
@@ -102,9 +102,9 @@ class _HomeScrollableSectionState extends ConsumerState<HomeScrollSubpages> {
                       alignment: Alignment.center,
                       child: Text(
                         formatted,
-                        textScaleFactor: 2,
+                        textScaleFactor: 1.5,
                       ),
-                          ),
+                    ),
                   );
                 },
               ),

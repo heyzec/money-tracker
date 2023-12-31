@@ -54,65 +54,63 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            tooltip: 'Back',
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "Add new category (${widget.isIncome ? 'income' : 'expense'})",
+        ),
+        actions: [
+          IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              _onSubmit(ref.read(databaseProvider));
             },
+            icon: Icon(Icons.done),
           ),
-          title: Text(
-            "Add new category (${widget.isIncome ? 'income' : 'expense'})",
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                _onSubmit(ref.read(databaseProvider));
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _onSubmit(ref.read(databaseProvider));
+        },
+        child: Icon(Icons.check),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: _controller,
+              decoration: InputDecoration(labelText: 'Category name'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
               },
-              icon: Icon(Icons.done),
+            ),
+            CardSelector(
+              categories: ALL
+                  .map(
+                    (category) => CardInfo(
+                      iconName: category,
+                      color: iconNametoColor(category),
+                    ),
+                  )
+                  .toList(),
+              onSelectCallback: (CardInfo card) {
+                setState(() {
+                  selected = card;
+                });
+              },
             ),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _onSubmit(ref.read(databaseProvider));
-          },
-          child: Icon(Icons.check),
-        ),
-        body: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _controller,
-                decoration: InputDecoration(labelText: 'Category name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              CardSelector(
-                categories: ALL
-                    .map(
-                      (category) => CardInfo(
-                        iconName: category,
-                        color: iconNametoColor(category),
-                      ),
-                    )
-                    .toList(),
-                onSelectCallback: (CardInfo card) {
-                  setState(() {
-                    selected = card;
-                  });
-                },
-              ),
-            ],
-          ),
         ),
       ),
     );
