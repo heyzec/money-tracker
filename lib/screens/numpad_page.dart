@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/widgets/cards/selector_db.dart';
+import 'package:namer_app/widgets/cards/card_selector.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 
@@ -53,9 +53,9 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     });
   }
 
-  void onCategorySelected(String categoryName) {
+  void onCategorySelected(CardInfo cardInfo) {
     setState(() {
-      selected = categoryName;
+      selected = cardInfo.text;
     });
     insertTransaction(ref.read(databaseProvider));
     ref.invalidate(queryResultProvider);
@@ -70,6 +70,8 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
 
   @override
   Widget build(BuildContext context) {
+    var categories = ref.watch(categoriesProvider);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -156,7 +158,31 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                   );
                 },
                 child: showCategories
-                    ? SelectorWithDbItems(onCategorySelected, widget.isIncome)
+                    ? categories.when(
+                        data: (categories) {
+                          List<CardInfo> cards = categories
+                              .where(
+                                (category) =>
+                                    category.isIncome == widget.isIncome,
+                              )
+                              .map(
+                                (category) => CardInfo(
+                                  iconName: category.iconName,
+                                  text: category.name,
+                                  color: Color(category.color),
+                                ),
+                              )
+                              .toList();
+                          return CardSelector(
+                            categories: cards,
+                            onSelectCallback: onCategorySelected,
+                          );
+                        },
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
+                        error: (error, _) =>
+                            Center(child: Text('Error: $error')),
+                      )
                     : NumpadLayout(
                         logic: logic,
                         onUpdate: (String newDisplay) {
