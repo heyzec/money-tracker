@@ -7,6 +7,7 @@ import 'package:namer_app/screens/transactions/transaction_add_page.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/theme.dart';
+import 'package:namer_app/widgets/custom_sidebar.dart';
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -16,19 +17,30 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<CustomSidebarState> drawerKey = GlobalKey();
   bool _showSandbox = false;
 
   @override
   Widget build(BuildContext context) {
     print("Build: HomePage()");
-    // DateTime startDate = ref.watch(appStateProvider.select((appState) => appState.startDate));
+
     Period period =
         ref.watch(appStateProvider.select((appState) => appState.period));
+
+    double drawerWidth =
+        (MediaQuery.of(context).size.width - 120).clamp(0, 300);
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Home'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          tooltip: 'Sandbox',
+          onPressed: () {
+            drawerKey.currentState!.toggle();
+          },
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.face),
@@ -51,37 +63,40 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      drawer: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
-        child: Sidebar(period, (
-          Period newPeriod, [
-          DateTime? date,
-        ]) {
-          ref.read(appStateProvider.notifier).changePeriod(newPeriod, date);
-          _scaffoldKey.currentState!.openEndDrawer(); // Close drawer
-        }),
-      ),
       body: _showSandbox
           ? Sandbox()
-          : Column(
-              children: [
-                Expanded(child: HomeScrollSubpages()),
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(16.0),
-                        child: HomeEntryButton(false),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(16.0),
-                        child: HomeEntryButton(true),
-                      ),
-                    ],
+          : CustomSidebar(
+              key: drawerKey,
+              width: drawerWidth,
+              drawerContents: Sidebar(period, (
+                Period newPeriod, [
+                DateTime? date,
+              ]) {
+                ref
+                    .read(appStateProvider.notifier)
+                    .changePeriod(newPeriod, date);
+                drawerKey.currentState!.close();
+              }),
+              child: Column(
+                children: [
+                  Expanded(child: HomeScrollSubpages()),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(false),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(16.0),
+                          child: HomeEntryButton(true),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
