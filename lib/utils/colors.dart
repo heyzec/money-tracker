@@ -1,5 +1,35 @@
 import 'package:flutter/material.dart';
 
+extension ColorHexExt on Color {
+  String toHexCode() {
+    return '#${value.toRadixString(16).substring(2, 8)}';
+  }
+
+  static Color fromHexCode(String s) {
+    s = s.replaceAll('#', '');
+    return Color(int.parse(s, radix: 16));
+  }
+
+  static const minMutedSaturation = 0.1;
+  static const maxMutedSaturation = 0.5;
+  static const minMutedValue = 0.5;
+  static const maxMutedValue = 0.9;
+
+  Color muted() {
+    HSVColor hsvColor = HSVColor.fromColor(this);
+
+    double newSaturation =
+        hsvColor.saturation * (maxMutedSaturation - minMutedSaturation) +
+            minMutedSaturation;
+    double newValue =
+        hsvColor.value * (maxMutedValue - minMutedValue) + minMutedValue;
+
+    HSVColor newHsvColor =
+        hsvColor.withSaturation(newSaturation).withValue(newValue);
+    return newHsvColor.toColor();
+  }
+}
+
 Color darken(color) {
   return Color.lerp(color, Colors.black, 0.4)!;
 }

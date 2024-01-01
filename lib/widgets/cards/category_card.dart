@@ -30,7 +30,6 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Color color = iconNametoColor(iconName);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onPressed,

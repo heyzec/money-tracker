@@ -3,17 +3,9 @@
 
 import 'dart:ui';
 import 'package:drift/drift.dart';
+import 'package:namer_app/utils/colors.dart';
 
-extension ColorHexExt on Color {
-  String toHexCode() {
-    return '#${value.toRadixString(16).substring(2, 8)}';
-  }
 
-  static Color fromHexCode(String s) {
-    s = s.replaceAll('#', '');
-    return Color(int.parse(s, radix: 16));
-  }
-}
 
 class ColorConverter extends TypeConverter<Color, String> {
   const ColorConverter();
