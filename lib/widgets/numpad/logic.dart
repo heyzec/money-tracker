@@ -1,3 +1,5 @@
+import 'dart:async';
+
 const validCalculatorActions = [
   "1",
   "2",
@@ -22,8 +24,21 @@ class NumpadLogic {
   String _buffer = "0";
   int? _register;
   String? _operation;
+  StreamController<String> _streamController = StreamController();
 
-  int _parseToCents(String s) {
+  NumpadLogic([int? initialValue]) {
+    if (initialValue == null) {
+      _buffer = "0";
+      _register;
+    } else {
+      _buffer = _formatFromCents(initialValue);
+      _register = initialValue;
+    }
+  }
+
+  Stream<String> get stream => _streamController.stream;
+
+  static int _parseToCents(String s) {
     if (s.isEmpty) {
       return 0;
     }
@@ -42,7 +57,7 @@ class NumpadLogic {
     return dollars * 100 + cents;
   }
 
-  String _formatFromCents(int n) {
+  static String _formatFromCents(int n) {
     int dollars = n ~/ 100;
     int cents = n % 100;
     return cents > 0 ? "$dollars.$cents" : "$dollars";
@@ -56,6 +71,7 @@ class NumpadLogic {
     return _parseToCents(_buffer);
   }
 
+  // TODO: Split into separate handlers
   void handle(String action) {
     if (!validCalculatorActions.contains(action)) {
       throw 'Invalid action $action';
@@ -67,6 +83,7 @@ class NumpadLogic {
       }
       if (_buffer == '0' && action != '.') {
         _buffer = action;
+        _streamController.add(_buffer);
         return;
       }
       _buffer += action;
@@ -106,9 +123,11 @@ class NumpadLogic {
     } else if (action == 'B') {
       if (_buffer.length == 1) {
         _buffer = "0";
+        _streamController.add(_buffer);
         return;
       }
       _buffer = _buffer.substring(0, _buffer.length - 1);
     }
+    _streamController.add(_buffer);
   }
 }

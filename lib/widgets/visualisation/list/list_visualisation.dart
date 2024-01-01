@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:namer_app/db/database.dart';
+import 'package:namer_app/screens/transactions/transaction_edit_page.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
@@ -73,21 +74,36 @@ class ListVisualisation extends ConsumerWidget {
       children: [
         Column(
           children: transactions.map(
-            (t) {
+            (transaction) {
               return ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TransactionEditPage(
+                        transaction: transaction,
+                        isIncome: category.isIncome,
+                      ),
+                    ),
+                  );
+                },
                 title: Stack(
                   children: [
                     Row(
                       children: [
-                        displayMonetaryAmount(t.amount),
-                        Text(t.remarks.isNotEmpty ? " - ${t.remarks}" : ""),
+                        displayMonetaryAmount(transaction.amount),
+                        Text(
+                          transaction.remarks.isNotEmpty
+                              ? " - ${transaction.remarks}"
+                              : "",
+                        ),
                       ],
                     ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Tooltip(
-                        message: "Debug: ${t.date}",
-                        child: Text(dateTimeToStringShort(t.date)),
+                        message: "Debug: ${transaction.date}",
+                        child: Text(dateTimeToStringShort(transaction.date)),
                       ),
                     ),
                   ],

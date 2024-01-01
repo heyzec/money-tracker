@@ -23,16 +23,14 @@ String actionToDisplay(String action) {
 
 class NumpadLayout extends StatelessWidget {
   final NumpadLogic logic;
-  final void Function(String) onUpdate;
 
-  NumpadLayout({required this.logic, required this.onUpdate});
+  NumpadLayout({required this.logic});
 
   _NumpadButton _createButton(String action) {
     return _NumpadButton(
       action: action,
       onPressed: () {
         logic.handle(action);
-        onUpdate(logic.getBuffer());
       },
     );
   }

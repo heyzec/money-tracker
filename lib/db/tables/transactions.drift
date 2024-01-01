@@ -18,10 +18,25 @@ insertTransaction:
         :amount,
         :remarks,
         (
-            SELECT id FROM categories
+            SELECT categories.id FROM categories
             WHERE name == :categoryName
         )
     );
+
+updateTransaction:
+    UPDATE transactions SET
+        date = :date,
+        amount = :amount,
+        remarks = :remarks,
+        category = (
+            SELECT categories.id FROM categories
+            WHERE name == :categoryName
+        )
+    WHERE transactions.id == :id;
+
+deleteTransaction:
+    DELETE FROM transactions
+    WHERE transactions.id == :id;
 
 getTransactionsWithinDateRange:
     SELECT * FROM transactions

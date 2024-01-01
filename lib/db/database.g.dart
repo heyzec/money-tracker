@@ -604,7 +604,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       required String remarks,
       required String categoryName}) {
     return customInsert(
-      'INSERT INTO transactions (date, amount, remarks, category) VALUES (?1, ?2, ?3, (SELECT id FROM categories WHERE name == ?4))',
+      'INSERT INTO transactions (date, amount, remarks, category) VALUES (?1, ?2, ?3, (SELECT categories.id FROM categories WHERE name == ?4))',
       variables: [
         Variable<DateTime>(date),
         Variable<int>(amount),
@@ -612,6 +612,35 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         Variable<String>(categoryName)
       ],
       updates: {transactions},
+    );
+  }
+
+  Future<int> updateTransaction(
+      {required DateTime date,
+      required int amount,
+      required String remarks,
+      required String categoryName,
+      required int id}) {
+    return customUpdate(
+      'UPDATE transactions SET date = ?1, amount = ?2, remarks = ?3, category = (SELECT categories.id FROM categories WHERE name == ?4) WHERE transactions.id == ?5',
+      variables: [
+        Variable<DateTime>(date),
+        Variable<int>(amount),
+        Variable<String>(remarks),
+        Variable<String>(categoryName),
+        Variable<int>(id)
+      ],
+      updates: {transactions},
+      updateKind: UpdateKind.update,
+    );
+  }
+
+  Future<int> deleteTransaction({required int id}) {
+    return customUpdate(
+      'DELETE FROM transactions WHERE transactions.id == ?1',
+      variables: [Variable<int>(id)],
+      updates: {transactions},
+      updateKind: UpdateKind.delete,
     );
   }
 

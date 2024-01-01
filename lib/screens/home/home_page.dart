@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/screens/home/home_scroll_subpages.dart';
-import 'package:namer_app/screens/numpad_page.dart';
 import 'package:namer_app/screens/sandbox.dart';
 import 'package:namer_app/screens/settings/settings_page.dart';
+import 'package:namer_app/screens/transactions/transaction_add_page.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/providers.dart';
 import 'package:namer_app/utils/theme.dart';
-
 import 'package:namer_app/widgets/sidebar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -115,7 +114,7 @@ class HomeEntryButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NumpadPage(
+            builder: (context) => TransactionAddPage(
               isIncome: isIncome,
             ),
           ),

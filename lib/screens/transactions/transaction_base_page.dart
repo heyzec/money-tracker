@@ -7,41 +7,47 @@ import 'package:namer_app/widgets/cards/card_selector.dart';
 import 'package:namer_app/widgets/numpad/layout.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 
-class NumpadPage extends ConsumerStatefulWidget {
+class TransactionBasePage extends ConsumerStatefulWidget {
+  final NumpadLogic logic;
+  final Transaction? transaction;
+  final DateTime initialDate;
+  final void Function({
+    required CardInfo cardInfo,
+    required String text,
+    required DateTime date,
+  }) onSubmit;
+  final VoidCallback? onDelete;
   final bool isIncome;
 
-  NumpadPage({required this.isIncome});
+  TransactionBasePage({
+    required this.logic,
+    this.transaction,
+    required this.initialDate,
+    required this.onSubmit,
+    this.onDelete,
+    required this.isIncome,
+  });
 
   @override
-  ConsumerState<NumpadPage> createState() => _NumpadPageState();
+  ConsumerState<TransactionBasePage> createState() =>
+      _TransactionBasePageState();
 }
 
-class _NumpadPageState extends ConsumerState<NumpadPage> {
-  NumpadLogic logic = NumpadLogic();
+class _TransactionBasePageState extends ConsumerState<TransactionBasePage> {
   bool showCategories = false;
-  String display = "0";
-  DateTime date = DateTime.now();
-  String? selected;
-  final TextEditingController _controller = TextEditingController();
+  TextEditingController _controller = TextEditingController();
+  late DateTime date;
 
-  void insertTransaction(AppDatabase database) async {
-    var amount = logic.getValue();
-
-    await database.insertTransaction(
-      date: date,
-      amount: amount,
-      remarks: _controller.text,
-      // TODO: Handle in the event of duplicate category name
-      categoryName: selected!,
-    );
-
-    Navigator.pop(context);
+  @override
+  void initState() {
+    super.initState();
+    date = widget.initialDate;
   }
 
-  void onDatePressed() async {
+  void onDatePressed(BuildContext context) async {
     DateTime? newDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: date,
       firstDate: appMinDate,
       lastDate: appMaxDate,
     );
@@ -50,21 +56,6 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
     }
     setState(() {
       date = newDate;
-    });
-  }
-
-  void onCategorySelected(CardInfo cardInfo) {
-    setState(() {
-      selected = cardInfo.text;
-    });
-    insertTransaction(ref.read(databaseProvider));
-    ref.invalidate(queryResultProvider);
-  }
-
-  void onBackspacePressed() {
-    logic.handle('B');
-    setState(() {
-      display = logic.getBuffer();
     });
   }
 
@@ -81,7 +72,18 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
             Navigator.pop(context);
           },
         ),
-        title: Text(widget.isIncome ? "New income" : "New expense"),
+        title: Text(
+          "${widget.transaction == null ? "New" : "Edit"} ${widget.isIncome ? 'income' : 'expense'}",
+        ),
+        actions: widget.transaction == null
+            ? null
+            : [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  tooltip: 'Delete',
+                  onPressed: widget.onDelete,
+                ),
+              ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -89,7 +91,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextButton.icon(
-              onPressed: onDatePressed,
+              onPressed: () => onDatePressed(context),
               icon: Icon(Icons.calendar_month),
               label: Text(dateTimeToStringLong(date)),
             ),
@@ -99,12 +101,18 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                 child: Stack(
                   children: [
                     Align(
-                      child: Text(
-                        display,
-                        textScaleFactor: 5,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                      child: StreamBuilder<String>(
+                        stream: widget.logic.stream,
+                        initialData: widget.logic.getBuffer(),
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data!,
+                            textScaleFactor: 5,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     Align(
@@ -115,7 +123,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
                         tooltip: 'Backspace',
-                        onPressed: onBackspacePressed,
+                        onPressed: () => widget.logic.handle('B'),
                       ),
                     ),
                   ],
@@ -135,7 +143,8 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                   const end = Offset.zero;
                   const curve = Curves.easeInOut;
 
-                  var slideTransition = Tween(begin: begin, end: end).animate(
+                  Animation<Offset> slideTransition =
+                      Tween(begin: begin, end: end).animate(
                     CurvedAnimation(parent: animation, curve: curve),
                   );
 
@@ -175,7 +184,12 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                               .toList();
                           return CardSelector(
                             categories: cards,
-                            onSelectCallback: onCategorySelected,
+                            onSelectCallback: (CardInfo card) =>
+                                widget.onSubmit(
+                              cardInfo: card,
+                              text: _controller.text,
+                              date: date,
+                            ),
                           );
                         },
                         loading: () =>
@@ -184,12 +198,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
                             Center(child: Text('Error: $error')),
                       )
                     : NumpadLayout(
-                        logic: logic,
-                        onUpdate: (String newDisplay) {
-                          setState(() {
-                            display = newDisplay;
-                          });
-                        },
+                        logic: widget.logic,
                       ),
               ),
             ),
@@ -198,12 +207,7 @@ class _NumpadPageState extends ConsumerState<NumpadPage> {
               flex: 1,
               child: SizedBox(
                 child: OutlinedButton(
-                  child: Text(
-                    "Select Category",
-                    //   style: TextStyle(
-                    //     color: Theme.of(context).colorScheme.tertiary,
-                    //   ),
-                  ),
+                  child: Text("Select Category"),
                   onPressed: () {
                     setState(() {
                       showCategories = !showCategories;
