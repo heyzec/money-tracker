@@ -44,3 +44,12 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+@pragma('vm:entry-point')
+taskerActionConfigMain(List<String> args) {
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
+}
