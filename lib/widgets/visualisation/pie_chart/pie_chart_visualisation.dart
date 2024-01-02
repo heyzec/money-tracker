@@ -253,7 +253,9 @@ class _CategoryIndicatorPainter extends CustomPainter {
       canvas.drawLine(
         pieCenterTranslated,
         categoryIconLocationTranslated,
-        Paint()..color = color,
+        Paint()
+          ..color = color
+          ..strokeWidth = 1.5,
       );
     });
   }

@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:namer_app/utils/constants.dart';
 
 final appMinDate = DateTime(2000);
 final appMaxDate = DateTime(2050);
@@ -121,17 +122,17 @@ class Period {
       default:
         if (startDate.year != endDate.year) {
           DateFormat fmt = DateFormat('d MMM y');
-          return "${fmt.format(startDate)} - ${fmt.format(endDate)}";
+          return "${fmt.format(startDate)} $charDash ${fmt.format(endDate)}";
         }
 
         String output = "";
         if (startDate.month == endDate.month) {
           DateFormat day = DateFormat('d');
           output +=
-              "${day.format(startDate)} - ${day.format(endDate)} ${DateFormat('MMM').format(startDate)}";
+              "${day.format(startDate)} $charDash ${day.format(endDate)} ${DateFormat('MMM').format(startDate)}";
         } else if (startDate.year == endDate.year) {
           DateFormat fmt = DateFormat('d MMM');
-          output += "${fmt.format(startDate)} - ${fmt.format(endDate)}";
+          output += "${fmt.format(startDate)} $charDash ${fmt.format(endDate)}";
         }
         if (shouldShowYear(startDate)) {
           output += " ${DateFormat('y').format(startDate)}";

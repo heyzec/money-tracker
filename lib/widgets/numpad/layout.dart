@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/utils/constants.dart';
 import 'package:namer_app/widgets/numpad/logic.dart';
 
 extension ListSpaceBetweenExtension on List<Widget> {
@@ -13,9 +14,9 @@ extension ListSpaceBetweenExtension on List<Widget> {
 String actionToDisplay(String action) {
   switch (action) {
     case "x":
-      return String.fromCharCode(0x00D7); // times
+      return charTimes;
     case "/":
-      return String.fromCharCode(0x00F7); // division
+      return charDivision;
     default:
       return action;
   }

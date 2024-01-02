@@ -65,13 +65,6 @@ class _TransactionBasePageState extends ConsumerState<TransactionBasePage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: Text(
           "${widget.transaction == null ? "New" : "Edit"} ${widget.isIncome ? 'income' : 'expense'}",
         ),
@@ -95,45 +88,61 @@ class _TransactionBasePageState extends ConsumerState<TransactionBasePage> {
               icon: Icon(Icons.calendar_month),
               label: Text(dateTimeToStringLong(date)),
             ),
-            Card(
-              color: Theme.of(context).colorScheme.primary,
-              child: IntrinsicHeight(
-                child: Stack(
-                  children: [
-                    Align(
-                      child: StreamBuilder<String>(
-                        stream: widget.logic.stream,
-                        initialData: widget.logic.getBuffer(),
-                        builder: (context, snapshot) {
-                          return Text(
-                            snapshot.data!,
-                            textScaleFactor: 5,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                children: [
+                  Card(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: IntrinsicHeight(
+                      child: Stack(
+                        children: [
+                          Align(
+                            child: StreamBuilder<String>(
+                              stream: widget.logic.stream,
+                              initialData: widget.logic.getBuffer(),
+                              builder: (context, snapshot) {
+                                return Text(
+                                  snapshot.data!,
+                                  textScaleFactor: 5,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.backspace,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                tooltip: 'Backspace',
+                                onPressed: () => widget.logic.handle('B'),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.backspace,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        tooltip: 'Backspace',
-                        onPressed: () => widget.logic.handle('B'),
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: TextFormField(
+                      controller: _controller,
+                      decoration: InputDecoration(labelText: 'Remarks'),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            TextFormField(
-              controller: _controller,
-              decoration: InputDecoration(labelText: 'Note'),
-            ),
+            SizedBox(height: 20),
             Expanded(
               flex: 4,
               child: AnimatedSwitcher(

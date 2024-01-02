@@ -56,13 +56,6 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: Text(
           "Add new category (${widget.isIncome ? 'income' : 'expense'})",
         ),
@@ -76,6 +69,7 @@ class _CategoryAddPageState extends ConsumerState<CategoryAddPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: "Done",
         onPressed: () {
           _onSubmit(ref.read(databaseProvider));
         },

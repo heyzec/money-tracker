@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:namer_app/utils/theme.dart';
 // import 'package:noob/noob.dart';
@@ -19,7 +20,7 @@ void main() async {
   // // print top 10 stacks leading to rebuilds every 10 seconds
   // Timer.periodic(const Duration(seconds: 10), (_) => tracker.printTopScheduleBuildForStacks());
 
-  // run
+  SystemChrome.setSystemUIOverlayStyle(overlayStyle);
   runApp(
     ProviderScope(
       child: MyApp(),
