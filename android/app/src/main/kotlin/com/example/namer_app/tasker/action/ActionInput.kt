@@ -1,8 +1,8 @@
-package dev.k9withabone.flutter_tasker_integration_example.tasker.action
+package com.example.namer_app.tasker.action
 
 import com.joaomgcd.taskerpluginlibrary.input.TaskerInputField
 import com.joaomgcd.taskerpluginlibrary.input.TaskerInputRoot
-import dev.k9withabone.flutter_tasker_integration_example.R
+import com.example.namer_app.R
 
 @TaskerInputRoot
 class ActionInput @JvmOverloads constructor(
