@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/screens/settings/category_view_page.dart';
+import 'package:namer_app/screens/settings/data/import_data_page.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -24,14 +25,21 @@ class SettingsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => CategoryViewPage()),
               );
             },
-            title: Card(
-              child: SizedBox(
-                height: 50,
-                child: Center(
-                  child: Text('Categories'),
-                ),
-              ),
-            ),
+            leading: Icon(Icons.category),
+            title: Text('Categories'),
+            subtitle: Text("Add income and expense categories"),
+          ),
+          ListTile(
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ImportDataPage()),
+              );
+              return;
+            },
+            leading: Icon(Icons.download),
+            title: Text('Data'),
+            subtitle: Text("Import data from csv"),
           ),
         ],
       ),

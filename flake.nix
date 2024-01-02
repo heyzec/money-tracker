@@ -30,6 +30,9 @@ outputs = { self, nixpkgs, flake-utils }:
             flutter
             androidSdk
             jdk17
+
+            # Required by file_picker on linux
+            gnome.zenity
           ];
         };
     });

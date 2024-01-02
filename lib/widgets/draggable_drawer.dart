@@ -48,6 +48,7 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
 
   double gestureStartLocalPosition = 0.0;
   double gestureStartSize = 0.0;
+
   /// For drawer to ignore `openHandle` when manually dragged
   bool isManuallyDragged = false;
 
@@ -99,6 +100,8 @@ class _DraggableDrawerState extends State<DraggableDrawer> {
                       double size = snapshot.data!;
                       opacity =
                           (size - drawerHandleSize) / (1 - drawerHandleSize);
+                      // If window is resized, can go out of bounds
+                      opacity = opacity.clamp(0, 1);
                     } else {
                       opacity = widget.openDrawer ? 1.0 : 0.0;
                     }

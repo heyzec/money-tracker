@@ -37,13 +37,13 @@ var appThemeData = ThemeData(
     // TRY THIS: Change to "Brightness.light"
     //           and see that all colors change
     //           to better contrast a light background.
-    brightness: Brightness.dark,
+    brightness: Brightness.light,
   ).copyWith(
     background: appBackgroundColor,
-    onBackground: appOnBackgroundColor,
+    onBackground: Colors.green[500],
 
     surface: appBackgroundColor,
-    onSurface: appOnBackgroundColor,
+    onSurface: Colors.green[800],
 
     // [Text] within a [OutlinedButton] will use this color by default
     primary: appPrimaryColor,
