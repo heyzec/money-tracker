@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/screens/home/home_scroll_subpages.dart';
@@ -36,7 +38,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: const Text('Home'),
         leading: IconButton(
           icon: const Icon(Icons.menu),
-          tooltip: 'Sandbox',
+          tooltip: 'Open navigation',
           onPressed: () {
             drawerKey.currentState!.toggle();
           },
@@ -53,7 +55,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'Setting Icon',
+            tooltip: 'Settings',
             onPressed: () {
               Navigator.push(
                 context,
@@ -80,19 +82,37 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 children: [
                   Expanded(child: HomeScrollSubpages()),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.all(16.0),
-                          child: HomeEntryButton(false),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(16.0),
-                          child: HomeEntryButton(true),
-                        ),
-                      ],
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 200),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Spacer(
+                            flex: 2,
+                          ),
+                          Expanded(
+                            flex: 7,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: HomeEntryButton(false),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          Expanded(
+                            flex: 7,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: HomeEntryButton(true),
+                            ),
+                          ),
+                          Spacer(
+                            flex: 2,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -112,29 +132,36 @@ class HomeEntryButton extends StatelessWidget {
     Color color = isIncome
         ? Theme.of(context).extension<AppExtraColors>()!.incomeColor
         : Theme.of(context).extension<AppExtraColors>()!.expenseColor;
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shape: CircleBorder(),
-        padding: EdgeInsets.all(30),
-        backgroundColor: Colors.white,
-        foregroundColor: color,
-        side: BorderSide(color: color),
-      ),
-      child: Icon(
-        (isIncome ? Icons.add : Icons.remove),
-        size: 40,
-        color: color,
-      ),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TransactionAddPage(
-              isIncome: isIncome,
+    return LayoutBuilder(
+      builder: (_, constraints) => SizedBox(
+        width: min(constraints.maxWidth, constraints.maxHeight),
+        height: min(constraints.maxWidth, constraints.maxHeight),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: CircleBorder(),
+            backgroundColor: Colors.white,
+            foregroundColor: color,
+            side: BorderSide(color: color, width: 6),
+          ),
+          child: Center(
+            child: Icon(
+              (isIncome ? Icons.add : Icons.remove),
+              size: 45,
+              color: color,
             ),
           ),
-        );
-      },
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransactionAddPage(
+                  isIncome: isIncome,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

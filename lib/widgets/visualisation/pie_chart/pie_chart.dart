@@ -85,29 +85,50 @@ class _PieSliceBorder extends OutlinedBorder {
     return Path(); // No inner path for a pie slice
   }
 
+  static const double holeRatio = 0.6;
+
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     final Path path = Path();
     final double centerX = rect.center.dx;
     final double centerY = rect.center.dy;
-    path.moveTo(centerX, centerY);
+    final double radius = min(rect.width, rect.height) / 2;
+
+    double sweepAngle = this.sweepAngle;
 
     // Handle edge case, Path.arcTo will not draw anything if sweepAngle is 360
     if (sweepAngle == 360) {
-      path.addOval(rect);
-      return path;
+      // Hacky way to handle edge case. Original way no longer works now that we need a hole.
+      sweepAngle = 360 - 0.00001;
+      // path.addOval(rect);
+      // return path;
     }
 
-    path.lineTo(
-      centerX + rect.width / 2 * cos(_degreesToRadians(startAngle)),
-      centerY + rect.height / 2 * sin(_degreesToRadians(startAngle)),
+    Rect boundingSquareLarge = Rect.fromCenter(
+      center: Offset(centerX, centerY),
+      width: radius * 2,
+      height: radius * 2,
+    );
+
+    Rect boundingSquareSmall = Rect.fromCenter(
+      center: Offset(centerX, centerY),
+      width: radius * 2 * holeRatio,
+      height: radius * 2 * holeRatio,
     );
     path.arcTo(
-      rect,
+      boundingSquareLarge,
       _degreesToRadians(startAngle),
       _degreesToRadians(sweepAngle),
       false,
     );
+
+    path.arcTo(
+      boundingSquareSmall,
+      _degreesToRadians(startAngle + sweepAngle),
+      _degreesToRadians(-sweepAngle),
+      false,
+    );
+
     path.close();
 
     return path;

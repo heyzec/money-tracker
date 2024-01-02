@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:namer_app/db/database.dart';
 import 'package:namer_app/screens/transactions/transaction_edit_page.dart';
+import 'package:namer_app/utils/colors.dart';
 import 'package:namer_app/utils/dates.dart';
 import 'package:namer_app/utils/money.dart';
 import 'package:namer_app/utils/providers.dart';
@@ -21,7 +22,7 @@ class ListVisualisation extends ConsumerWidget {
     BuildContext context,
   ) {
     int total = transactions.map((t) => t.amount).reduce((a, b) => a + b);
-    Color categoryColor = Color(category.color);
+    Color categoryColor = Color(category.color).darken();
 
     return ExpansionTile(
       controlAffinity: ListTileControlAffinity.leading,
@@ -91,6 +92,7 @@ class ListVisualisation extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
+                        SizedBox(width: 30),
                         displayMonetaryAmount(transaction.amount),
                         Text(
                           transaction.remarks.isNotEmpty
@@ -138,19 +140,23 @@ class ListVisualisation extends ConsumerWidget {
 
     return categories.when(
       data: (categories) {
-        return ListView(
-          controller: scrollController,
-          children: () {
-            List<ExpansionTile> panels = [];
-            for (var entry in data.entries) {
-              List<Transaction> transactions = entry.value;
-              Category category =
-                  categories.firstWhere((c) => c.id == entry.key.id);
+        return Theme(
+          // To remove divider lines https://stackoverflow.com/a/64237509
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ListView(
+            controller: scrollController,
+            children: () {
+              List<ExpansionTile> panels = [];
+              for (var entry in data.entries) {
+                List<Transaction> transactions = entry.value;
+                Category category =
+                    categories.firstWhere((c) => c.id == entry.key.id);
 
-              panels.add(buildPanel(category, transactions, context));
-            }
-            return panels;
-          }(),
+                panels.add(buildPanel(category, transactions, context));
+              }
+              return panels;
+            }(),
+          ),
         );
       },
       loading: () => Text("Loading"),

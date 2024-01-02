@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Color appBackgroundColor = Color.fromARGB(255, 242, 255, 246);
 Color appOnBackgroundColor = Color.fromARGB(255, 145, 196, 165);
@@ -155,3 +156,7 @@ class AppExtraColors extends ThemeExtension<AppExtraColors> {
   String toString() =>
       'MyColors(brandColor: $incomeColor, danger: $expenseColor)';
 }
+
+SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
+  systemNavigationBarColor: appBackgroundColor,
+);

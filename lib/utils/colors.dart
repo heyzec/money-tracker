@@ -28,16 +28,16 @@ extension ColorHexExt on Color {
         hsvColor.withSaturation(newSaturation).withValue(newValue);
     return newHsvColor.toColor();
   }
-}
 
-Color darken(color) {
-  return Color.lerp(color, Colors.black, 0.4)!;
+  Color darken() {
+    return Color.lerp(this, Colors.black, 0.1)!;
+  }
 }
 
 Color iconNametoColor(String iconName) {
   Color color = Color(iconName.hashCode);
   color = HSLColor.fromColor(color).withSaturation(1).toColor();
-  return darken(color);
+  return color.darken();
 }
 
 Color combineColors(Color color1, Color color2) {

@@ -12,16 +12,10 @@ class CategoryViewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: const Text('Categories'),
       ),
       floatingActionButton: PopupMenuButton(
+        tooltip: "Add category",
         itemBuilder: (context) => [
           PopupMenuItem(
             child: TextButton(

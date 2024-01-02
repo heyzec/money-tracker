@@ -48,7 +48,7 @@ class HomeScrollSubpage extends ConsumerWidget {
         int total = calculateBalance(queryResult);
         return Column(
           children: [
-            _DebugArea(pageIndex: pageIndex, query: query),
+            // _DebugArea(pageIndex: pageIndex, query: query),
             Expanded(
               child: DraggableDrawer(
                 pageIndex: pageIndex,
@@ -58,52 +58,58 @@ class HomeScrollSubpage extends ConsumerWidget {
                   ref.read(appStateProvider.notifier).changeDrawerOpen(b);
                 },
                 buildDrawerHandle: (toggleDrawer) {
-                  Widget dragHandle = Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.drag_handle,
-                      color: Theme.of(context).colorScheme.onBackground,
+                  Widget signifyDraggable = FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Icon(
+                        Icons.drag_handle,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                     ),
                   );
-                  Widget balanceButton = ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(
-                        total.isNegative
-                            ? Theme.of(context)
-                                .extension<AppExtraColors>()!
-                                .expenseColor
-                            : Theme.of(context)
-                                .extension<AppExtraColors>()!
-                                .incomeColor,
+                  Widget balanceButton = Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                          total.isNegative
+                              ? Theme.of(context)
+                                  .extension<AppExtraColors>()!
+                                  .expenseColor
+                              : Theme.of(context)
+                                  .extension<AppExtraColors>()!
+                                  .incomeColor,
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      // TODO: Avoid this, will cause rebuild
-                      ref.read(appStateProvider.notifier).changeDrawerOpen(
-                            !ref.watch(
-                              appStateProvider.select(
-                                (appState) => appState.isDrawerOpen,
+                      onPressed: () {
+                        // TODO: Avoid this, will cause rebuild
+                        ref.read(appStateProvider.notifier).changeDrawerOpen(
+                              !ref.watch(
+                                appStateProvider.select(
+                                  (appState) => appState.isDrawerOpen,
+                                ),
                               ),
-                            ),
-                          );
-                      // toggleDrawer();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      child: DefaultTextStyle.merge(
-                        style: TextStyle(color: Colors.white),
-                        child: Row(
-                          children: [
-                            Text("Balance"),
-                            SizedBox(width: 5),
-                            displayMonetaryAmount(
-                              total,
-                              addLeadingMinusBySign: true,
-                            ),
-                          ],
+                            );
+                        // toggleDrawer();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        child: DefaultTextStyle.merge(
+                          style: TextStyle(color: Colors.white),
+                          child: Row(
+                            children: [
+                              Text("Balance"),
+                              SizedBox(width: 5),
+                              displayMonetaryAmount(
+                                total,
+                                addLeadingMinusBySign: true,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -114,10 +120,11 @@ class HomeScrollSubpage extends ConsumerWidget {
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          dragHandle,
+                          signifyDraggable,
                           balanceButton,
-                          dragHandle,
+                          signifyDraggable,
                         ],
                       ),
                     ),
