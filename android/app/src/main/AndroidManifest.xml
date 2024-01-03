@@ -28,14 +28,15 @@
 
         <!-- tasker action -->
         <activity
-            android:name=".tasker.action.ActionConfigActivity"
+            android:name=".tasker.helloworld.HelloWorldActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
-            android:label="My Tasker Action">
+            android:label="Hello World">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
             </intent-filter>
         </activity>
+
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
