@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
-import 'package:namer_app/db/utils/seeds.dart';
+import 'package:money_tracker/db/utils/seeds.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 // ignore: depend_on_referenced_packages

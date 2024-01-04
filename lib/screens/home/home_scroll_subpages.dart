@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/screens/home/home_scroll_subpage.dart';
-import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/types.dart';
+import 'package:money_tracker/screens/home/home_scroll_subpage.dart';
+import 'package:money_tracker/utils/dates.dart';
+import 'package:money_tracker/utils/providers.dart';
+import 'package:money_tracker/utils/types.dart';
 
 class HomeScrollSubpages extends ConsumerStatefulWidget {
   @override

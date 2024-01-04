@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/constants.dart';
-import 'package:namer_app/widgets/numpad/logic.dart';
+import 'package:money_tracker/utils/constants.dart';
+import 'package:money_tracker/widgets/numpad/logic.dart';
 
 extension ListSpaceBetweenExtension on List<Widget> {
   List<Widget> withSpaceBetween({double? width, double? height}) => [

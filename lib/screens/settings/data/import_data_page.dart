@@ -9,9 +9,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/widgets/wrapped_stepper.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/utils/providers.dart';
+import 'package:money_tracker/widgets/wrapped_stepper.dart';
 import 'package:path/path.dart' as p;
 
 typedef Result<T> = ({String? error, T? result});

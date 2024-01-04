@@ -2,15 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/screens/home/home_scroll_subpages.dart';
-import 'package:namer_app/screens/sandbox.dart';
-import 'package:namer_app/screens/settings/settings_page.dart';
-import 'package:namer_app/screens/transactions/transaction_add_page.dart';
-import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/theme.dart';
-import 'package:namer_app/widgets/custom_sidebar.dart';
-import 'package:namer_app/widgets/sidebar.dart';
+import 'package:money_tracker/screens/home/home_scroll_subpages.dart';
+import 'package:money_tracker/screens/sandbox.dart';
+import 'package:money_tracker/screens/settings/settings_page.dart';
+import 'package:money_tracker/screens/transactions/transaction_add_page.dart';
+import 'package:money_tracker/utils/dates.dart';
+import 'package:money_tracker/utils/providers.dart';
+import 'package:money_tracker/utils/theme.dart';
+import 'package:money_tracker/widgets/custom_sidebar.dart';
+import 'package:money_tracker/widgets/sidebar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   @override

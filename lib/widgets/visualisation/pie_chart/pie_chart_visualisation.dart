@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/types.dart';
-import 'package:namer_app/widgets/cards/category_percent.dart';
-import 'package:namer_app/widgets/visualisation/pie_chart/pie_chart.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/utils/types.dart';
+import 'package:money_tracker/widgets/cards/category_percent.dart';
+import 'package:money_tracker/widgets/visualisation/pie_chart/pie_chart.dart';
 
 List<Coord> getBorderCoordinates(int nRows, int nCols) {
   List<Coord> coordinates = [];

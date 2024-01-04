@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/colors.dart';
+import 'package:money_tracker/utils/colors.dart';
 
 Map<String, Color> iconNameToColors = {
   // Income
@@ -63,5 +63,3 @@ List<CategoryRecord> getDefaultCategories() {
   }
   return output;
 }
-
-

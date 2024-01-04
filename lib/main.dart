@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
-import 'package:namer_app/utils/theme.dart';
+import 'package:money_tracker/utils/theme.dart';
 // import 'package:noob/noob.dart';
 
 import 'screens/home/home_page.dart';

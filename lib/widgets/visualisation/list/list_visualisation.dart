@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/screens/transactions/transaction_edit_page.dart';
-import 'package:namer_app/utils/colors.dart';
-import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/money.dart';
-import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/utils/theme.dart';
-import 'package:namer_app/utils/types.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/screens/transactions/transaction_edit_page.dart';
+import 'package:money_tracker/utils/colors.dart';
+import 'package:money_tracker/utils/dates.dart';
+import 'package:money_tracker/utils/money.dart';
+import 'package:money_tracker/utils/providers.dart';
+import 'package:money_tracker/utils/theme.dart';
+import 'package:money_tracker/utils/types.dart';
 
 class ListVisualisation extends ConsumerWidget {
   final QueryResult data;
