@@ -229,10 +229,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "40ae61a5d43feea6d24bd22c0537a6629db858963b99b4bc1c3db80676f32368"
+      sha256: "1efa911ca7086affd35f463ca2fc1799584fb6aa89883cf0af8e3664d6a02d55"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.4"
+    version: "2.3.2"
   drift:
     dependency: "direct main"
     description:
@@ -576,6 +576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  pigeon:
+    dependency: "direct dev"
+    description:
+      name: pigeon
+      sha256: f17c3f8becb2c62b8b340e9b060d67d985cc5c1f2b75adef17aef7d3bd41e40e
+      url: "https://pub.dev"
+    source: hosted
+    version: "15.0.3"
   platform:
     dependency: transitive
     description:

@@ -40,5 +40,8 @@ dev_dependencies:
   riverpod_generator: ^2.3.9
   riverpod_lint: ^2.3.7
 
+  pigeon: ^15.0.2
+
+
 flutter:
   uses-material-design: true
