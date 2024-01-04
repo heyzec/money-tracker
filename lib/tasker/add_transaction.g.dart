@@ -15,8 +15,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-class TaskerActionInput {
-  TaskerActionInput({
+class AddTransactionInputMessage {
+  AddTransactionInputMessage({
     this.config,
   });
 
@@ -28,40 +28,50 @@ class TaskerActionInput {
     ];
   }
 
-  static TaskerActionInput decode(Object result) {
+  static AddTransactionInputMessage decode(Object result) {
     result as List<Object?>;
-    return TaskerActionInput(
+    return AddTransactionInputMessage(
       config: result[0] as String?,
     );
   }
 }
 
-class TaskerActionOutput {
-  TaskerActionOutput({
-    this.config,
+class AddTransactionOutputMessage {
+  AddTransactionOutputMessage({
+    required this.isError,
+    this.err,
+    this.errMsg,
   });
 
-  String? config;
+  bool isError;
+
+  int? err;
+
+  String? errMsg;
 
   Object encode() {
     return <Object?>[
-      config,
+      isError,
+      err,
+      errMsg,
     ];
   }
 
-  static TaskerActionOutput decode(Object result) {
+  static AddTransactionOutputMessage decode(Object result) {
     result as List<Object?>;
-    return TaskerActionOutput(
-      config: result[0] as String?,
+    return AddTransactionOutputMessage(
+      isError: result[0]! as bool,
+      err: result[1] as int?,
+      errMsg: result[2] as String?,
     );
   }
 }
 
-class _TaskerActionConfigApiCodec extends StandardMessageCodec {
-  const _TaskerActionConfigApiCodec();
+class _AddTransactionConfigApiCodec extends StandardMessageCodec {
+  const _AddTransactionConfigApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is TaskerActionInput) {
+    if (value is AddTransactionInputMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -73,25 +83,25 @@ class _TaskerActionConfigApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return TaskerActionInput.decode(readValue(buffer)!);
+        return AddTransactionInputMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-class TaskerActionConfigApi {
-  /// Constructor for [TaskerActionConfigApi].  The [binaryMessenger] named argument is
+class AddTransactionConfigApi {
+  /// Constructor for [AddTransactionConfigApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  TaskerActionConfigApi({BinaryMessenger? binaryMessenger})
+  AddTransactionConfigApi({BinaryMessenger? binaryMessenger})
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _TaskerActionConfigApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _AddTransactionConfigApiCodec();
 
-  Future<bool> configDone(TaskerActionInput input) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.money_tracker.TaskerActionConfigApi.configDone';
+  Future<bool> configDone(AddTransactionInputMessage input) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.money_tracker.AddTransactionConfigApi.configDone';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
@@ -118,11 +128,11 @@ class TaskerActionConfigApi {
   }
 }
 
-class _TaskerActionRunApiCodec extends StandardMessageCodec {
-  const _TaskerActionRunApiCodec();
+class _AddTransactionRunApiCodec extends StandardMessageCodec {
+  const _AddTransactionRunApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is TaskerActionOutput) {
+    if (value is AddTransactionOutputMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -134,25 +144,25 @@ class _TaskerActionRunApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return TaskerActionOutput.decode(readValue(buffer)!);
+        return AddTransactionOutputMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-class TaskerActionRunApi {
-  /// Constructor for [TaskerActionRunApi].  The [binaryMessenger] named argument is
+class AddTransactionRunApi {
+  /// Constructor for [AddTransactionRunApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  TaskerActionRunApi({BinaryMessenger? binaryMessenger})
+  AddTransactionRunApi({BinaryMessenger? binaryMessenger})
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _TaskerActionRunApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _AddTransactionRunApiCodec();
 
-  Future<bool> runDone(TaskerActionOutput output) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.money_tracker.TaskerActionRunApi.runDone';
+  Future<bool> runDone(AddTransactionOutputMessage output) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.money_tracker.AddTransactionRunApi.runDone';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,

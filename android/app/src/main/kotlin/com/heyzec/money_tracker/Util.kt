@@ -14,20 +14,20 @@ import android.widget.RadioGroup
 import android.widget.Toast
 
 
-fun String.toToast(context: Context) {
-    Handler(Looper.getMainLooper()).post { Toast.makeText(context, this, Toast.LENGTH_LONG).show() }
-}
+// fun String.toToast(context: Context) {
+//     Handler(Looper.getMainLooper()).post { Toast.makeText(context, this, Toast.LENGTH_LONG).show() }
+// }
 
 
-fun Activity.alert(title: String, message: String) {
-    val alertDialog = AlertDialog.Builder(this).create()
-    alertDialog.setTitle(title)
-    alertDialog.setMessage(message)
-    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ -> dialog.dismiss() }
-    alertDialog.show()
-}
+// fun Activity.alert(title: String, message: String) {
+//     val alertDialog = AlertDialog.Builder(this).create()
+//     alertDialog.setTitle(title)
+//     alertDialog.setMessage(message)
+//     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ -> dialog.dismiss() }
+//     alertDialog.show()
+// }
 
-val RadioGroup.checkedRadioButton get() = this.findViewById<RadioButton>(checkedRadioButtonId)
+// val RadioGroup.checkedRadioButton get() = this.findViewById<RadioButton>(checkedRadioButtonId)
 
-val Context.canDrawOverlays get() = if (SDK_INT < M) true else android.provider.Settings.canDrawOverlays(this)
+// val Context.canDrawOverlays get() = if (SDK_INT < M) true else android.provider.Settings.canDrawOverlays(this)
 

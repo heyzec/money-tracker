@@ -27,21 +27,11 @@
         </activity>
 
         <!-- tasker action -->
-        <activity
-            android:name=".tasker.helloworld.HelloWorldActivity"
-            android:exported="true"
-            android:icon="@mipmap/launcher_icon"
-            android:label="Hello World">
-            <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
-            </intent-filter>
-        </activity>
-
        <activity
-            android:name=".tasker.action.ActionConfigActivity"
+            android:name=".tasker.addtransaction.AddTransactionConfigActivity"
             android:exported="true"
             android:icon="@mipmap/launcher_icon"
-            android:label="Tasker Action"
+            android:label="Add Transaction"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -51,7 +41,6 @@
                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
            </intent-filter>
        </activity>
-
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

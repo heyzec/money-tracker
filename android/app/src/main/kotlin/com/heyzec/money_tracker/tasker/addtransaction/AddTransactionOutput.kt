@@ -1,11 +1,11 @@
-package com.heyzec.money_tracker.tasker.action
+package com.heyzec.money_tracker.tasker.addtransaction
 
 import com.joaomgcd.taskerpluginlibrary.output.TaskerOutputObject
 import com.joaomgcd.taskerpluginlibrary.output.TaskerOutputVariable
 import com.heyzec.money_tracker.R
 
 @TaskerOutputObject()
-class ActionOutput(
+class AddTransactionOutput(
     @get:TaskerOutputVariable(
         "output",
         labelResIdName = "output",
