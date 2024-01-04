@@ -42,5 +42,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   rename_app: ^1.3.1
 
+  pigeon: ^15.0.2
+
+
 flutter:
   uses-material-design: true
