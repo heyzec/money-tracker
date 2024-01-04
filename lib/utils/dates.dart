@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:namer_app/utils/constants.dart';
+import 'package:money_tracker/utils/constants.dart';
 
 final appMinDate = DateTime(2000);
 final appMaxDate = DateTime(2050);

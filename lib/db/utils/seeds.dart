@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/defaults.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/utils/defaults.dart';
 
 void seedCategories(AppDatabase db) async {
   getDefaultCategories().forEach((item) {

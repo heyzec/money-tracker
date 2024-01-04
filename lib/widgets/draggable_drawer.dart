@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/functions.dart';
+import 'package:money_tracker/utils/functions.dart';
 
 /// A drawer where user can drag the handle to choose between showing
 /// (a) a single page; and (b) a scrollable section

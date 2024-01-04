@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/screens/transactions/transaction_base_page.dart';
-import 'package:namer_app/utils/providers.dart';
-import 'package:namer_app/widgets/cards/card_selector.dart';
-import 'package:namer_app/widgets/numpad/logic.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/screens/transactions/transaction_base_page.dart';
+import 'package:money_tracker/utils/providers.dart';
+import 'package:money_tracker/widgets/cards/card_selector.dart';
+import 'package:money_tracker/widgets/numpad/logic.dart';
 
 class TransactionAddPage extends ConsumerWidget {
   final bool isIncome;

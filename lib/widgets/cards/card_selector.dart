@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/widgets/cards/category_card.dart';
+import 'package:money_tracker/widgets/cards/category_card.dart';
 
 class CardInfo {
   String? text;

@@ -1,5 +1,5 @@
-name: namer_app
-description: A new Flutter project.
+name: money_tracker
+description: A simple money tracker, automatable with Tasker
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -39,6 +39,7 @@ dev_dependencies:
   import_sorter: ^4.6.0
   riverpod_generator: ^2.3.9
   riverpod_lint: ^2.3.7
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true

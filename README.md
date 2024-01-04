@@ -1,6 +1,7 @@
-# namer_app
+# Money Tracker
 
-A new Flutter project.
+A simple money tracker, automatable with Tasker
+
 
 ## Getting Started
 

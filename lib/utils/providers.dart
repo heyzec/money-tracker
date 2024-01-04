@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/functions.dart';
-import 'package:namer_app/utils/types.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/utils/dates.dart';
+import 'package:money_tracker/utils/functions.dart';
+import 'package:money_tracker/utils/types.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   AppDatabase database = AppDatabase();

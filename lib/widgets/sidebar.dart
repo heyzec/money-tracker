@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/dates.dart';
+import 'package:money_tracker/utils/dates.dart';
 
 class Sidebar extends StatelessWidget {
   final Period selected;

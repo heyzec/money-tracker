@@ -1,7 +1,7 @@
-import 'package:namer_app/db/database.dart';
-import 'package:namer_app/utils/dates.dart';
-import 'package:namer_app/utils/functions.dart';
-import 'package:namer_app/utils/providers.dart';
+import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/utils/dates.dart';
+import 'package:money_tracker/utils/functions.dart';
+import 'package:money_tracker/utils/providers.dart';
 
 /// Immutable class that captures state of the object.
 /// To be accessed and modified via [appStateProvider].

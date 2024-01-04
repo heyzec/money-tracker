@@ -1,4 +1,4 @@
-import 'package:namer_app/db/database.dart';
+import 'package:money_tracker/db/database.dart';
 
 Map<Category, List<Transaction>> groupTransactions(
   List<Transaction> transactions,
