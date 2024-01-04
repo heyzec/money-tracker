@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:namer_app/db/database.dart';
 import 'package:namer_app/tasker/tasker_action_pigeon.dart';
 import 'package:namer_app/utils/theme.dart';
 // import 'package:noob/noob.dart';
@@ -135,4 +136,31 @@ class _NewWidgetState extends State<NewWidget> {
     super.dispose();
     controller.dispose();
   }
+}
+
+@pragma('vm:entry-point')
+void taskerActionRunMain(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final input = TaskerActionInput(config: args[0]);
+
+  AppDatabase database = AppDatabase();
+
+  String message = "";
+
+  try {
+    work() async {
+      await database.insertTransaction(
+          date: DateTime.now(),
+          amount: 1337,
+          remarks: "Yay!!!!",
+          categoryName: "Eating out");
+      message = "got it";
+    }
+
+    await work().timeout(Duration(seconds: 5));
+  } catch (e) {
+    message = e.toString();
+  }
+
+  await TaskerActionRunApi().runDone(TaskerActionOutput(config: message));
 }

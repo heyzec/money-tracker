@@ -9,6 +9,6 @@ class ActionOutput(
     @get:TaskerOutputVariable(
         "output",
         labelResIdName = "output",
-        htmlLabelResIdName = "output_decription"
+        htmlLabelResIdName = "output_description"
     ) val output: String
 )
