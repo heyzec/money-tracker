@@ -61,10 +61,19 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+
 }
 
 flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'com.joaomgcd:taskerpluginlibrary:0.4.7'
+    implementation 'com.android.databinding:viewbinding:4.0.1'
+}
