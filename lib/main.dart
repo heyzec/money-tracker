@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:intl/intl.dart';
 import 'package:money_tracker/db/database.dart';
+import 'package:money_tracker/tasker/add_transaction.dart';
 import 'package:money_tracker/tasker/tasker_action_pigeon.dart';
 import 'package:money_tracker/utils/theme.dart';
 
@@ -48,10 +50,11 @@ class MyApp extends StatelessWidget {
 }
 
 @pragma('vm:entry-point')
-void taskerActionConfigMain(List<String> args) {
+void taskerAddTransactionConfigMain(List<String> args) {
   const title = 'Tasker Action Config';
 
-  final input = TaskerActionInput(config: args[0]);
+  // final input = AddTransactionInputMessage(config: args[0]);
+  final input = AddTransactionInputMessage(config: "hai");
 
   runApp(
     MaterialApp(
@@ -68,14 +71,14 @@ class NewWidget extends StatefulWidget {
     required this.input,
   });
 
-  final TaskerActionInput input;
+  final AddTransactionInputMessage input;
 
   @override
   State<NewWidget> createState() => _NewWidgetState();
 }
 
 class _NewWidgetState extends State<NewWidget> {
-  late TaskerActionInput input;
+  late AddTransactionInputMessage input;
   late TextEditingController controller;
   List<String> logs = [];
 
@@ -94,7 +97,7 @@ class _NewWidgetState extends State<NewWidget> {
         try {
           if (input.config?.isNotEmpty ?? false) {
             logs.add(input.config!);
-            await TaskerActionConfigApi().configDone(input);
+            await AddTransactionConfigApi().configDone(input);
           } else {
             logs.add("bailing");
             logs.add((input.config?.isNotEmpty == null).toString());
@@ -139,29 +142,38 @@ class _NewWidgetState extends State<NewWidget> {
   }
 }
 
-@pragma('vm:entry-point')
-void taskerActionRunMain(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final input = TaskerActionInput(config: args[0]);
+// @pragma('vm:entry-point')
+// void taskerAddTransactionRunMain(List<String> args) async {
+//   // String message = await doSafely(() async {
+//   //   return "wow";
+//   //   // return await addTransaction(args);
+//   // });
 
-  AppDatabase database = AppDatabase();
+//   await AddTransactionRunApi()
+//       .runDone(AddTransactionOutputMessage(config: "indeed"));
+// }
 
-  String message = "";
-
+/// Catches errors which would otherwise be swallowed silently by Flutter
+Future<String> doSafely(Future<String> Function() todo) async {
   try {
-    work() async {
-      await database.insertTransaction(
-          date: DateTime.now(),
-          amount: 1337,
-          remarks: "Yay!!!!",
-          categoryName: "Eating out");
-      message = "got it";
-    }
-
-    await work().timeout(Duration(seconds: 5));
+    return await todo();
   } catch (e) {
-    message = e.toString();
+    return e.toString();
+  }
+}
+
+@pragma('vm:entry-point')
+void taskerAddTransactionRunMain(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  String errMsg = await doSafely(() => addTransaction(args));
+
+  AddTransactionOutputMessage obj;
+  if (errMsg.isEmpty) {
+    obj = AddTransactionOutputMessage(isError: false);
+  } else {
+    obj = AddTransactionOutputMessage(isError: true, err: 1, errMsg: errMsg);
   }
 
-  await TaskerActionRunApi().runDone(TaskerActionOutput(config: message));
+  await AddTransactionRunApi().runDone(obj);
 }

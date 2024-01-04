@@ -38,7 +38,7 @@
         </activity>
 
        <activity
-            android:name=".tasker.action.ActionConfigActivity"
+            android:name=".tasker.addtransaction.AddTransactionConfigActivity"
             android:exported="true"
             android:icon="@mipmap/launcher_icon"
             android:label="Tasker Action"
@@ -51,6 +51,18 @@
                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
            </intent-filter>
        </activity>
+
+       <activity
+            android:name=".tasker.addtransaction.DynamicInputActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="Dynamic Input">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity>
+
+
 
 
         <!-- Don't delete the meta-data below.
