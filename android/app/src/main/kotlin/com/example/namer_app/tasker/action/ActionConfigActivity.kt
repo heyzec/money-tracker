@@ -41,9 +41,9 @@ class ActionConfigActivity : FlutterActivity(), TaskerPluginConfig<ActionInput>,
 
     override fun getDartEntrypointArgs(): MutableList<String> = mutableListOf(config)
 
-    override fun configDone(input: TaskerActionInput, callback: (Boolean) -> Unit) {
+    override fun configDone(input: TaskerActionInput, callback: (Result<Boolean>) -> Unit) {
         config = input.config ?: ""
-        callback(true)
+        callback(Result.success(true))
         actionHelper.finishForTasker()
     }
 

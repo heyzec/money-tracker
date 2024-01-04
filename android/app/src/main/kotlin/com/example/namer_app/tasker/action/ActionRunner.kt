@@ -18,8 +18,8 @@ class ActionRunner : TaskerPluginRunnerAction<ActionInput, ActionOutput>() {
     private class ActionRunApi : TaskerActionRunApi {
         val flutterDoneCompletable = CompletableDeferred<TaskerActionOutput>()
 
-        override fun runDone(output: TaskerActionOutput, callback: (Boolean) -> Unit) {
-            callback(true)
+        override fun runDone(output: TaskerActionOutput, callback: (Result<Boolean>) -> Unit) {
+            callback(Result.success(true))
             flutterDoneCompletable.complete(output)
         }
     }
