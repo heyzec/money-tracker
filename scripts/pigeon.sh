@@ -2,7 +2,7 @@
 # pigeon.sh
 # Generates files needed for Pigeon.
 
-set -e option
+set -e option errexit
 
 dart run pigeon \
   --input pigeons/add_transaction.dart \
