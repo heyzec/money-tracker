@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:money_tracker/features/visualisation/list/list_visualisation.dart';
+import 'package:money_tracker/features/visualisation/pie_chart/pie_chart_visualisation.dart';
 import 'package:money_tracker/utils/money.dart';
 import 'package:money_tracker/utils/providers.dart';
 import 'package:money_tracker/utils/theme.dart';
 import 'package:money_tracker/utils/types.dart';
 import 'package:money_tracker/widgets/draggable_drawer.dart';
-import 'package:money_tracker/widgets/visualisation/list/list_visualisation.dart';
-import 'package:money_tracker/widgets/visualisation/pie_chart/pie_chart_visualisation.dart';
 
 class HomeScrollSubpage extends ConsumerWidget {
   final int pageIndex;

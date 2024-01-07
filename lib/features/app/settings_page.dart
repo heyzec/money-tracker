@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_tracker/screens/settings/category_view_page.dart';
-import 'package:money_tracker/screens/settings/data/import_data_page.dart';
+import 'package:money_tracker/features/category/category_view_page.dart';
+import 'package:money_tracker/features/data/import_data_page.dart';
 
 class SettingsPage extends StatelessWidget {
   @override

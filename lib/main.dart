@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:money_tracker/features/app/home_page.dart';
 import 'package:money_tracker/tasker/add_transaction.dart';
 import 'package:money_tracker/tasker/add_transaction.g.dart';
 import 'package:money_tracker/utils/theme.dart';
 
 // import 'package:noob/noob.dart';
 
-import 'screens/home/home_page.dart';
 
 void main() async {
   debugPaintSizeEnabled = false;

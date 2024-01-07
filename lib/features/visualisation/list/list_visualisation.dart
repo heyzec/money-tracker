@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:money_tracker/db/database.dart';
-import 'package:money_tracker/screens/transactions/transaction_edit_page.dart';
+import 'package:money_tracker/features/transaction/transaction_edit_page.dart';
 import 'package:money_tracker/utils/colors.dart';
 import 'package:money_tracker/utils/dates.dart';
 import 'package:money_tracker/utils/money.dart';

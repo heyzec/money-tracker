@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_tracker/screens/home/home_scroll_subpages.dart';
-import 'package:money_tracker/screens/sandbox.dart';
-import 'package:money_tracker/screens/settings/settings_page.dart';
-import 'package:money_tracker/screens/transactions/transaction_add_page.dart';
+import 'package:money_tracker/features/app/home_scroll_subpages.dart';
+import 'package:money_tracker/features/app/sandbox.dart';
+import 'package:money_tracker/features/app/settings_page.dart';
+import 'package:money_tracker/features/transaction/transaction_add_page.dart';
 import 'package:money_tracker/utils/dates.dart';
 import 'package:money_tracker/utils/providers.dart';
 import 'package:money_tracker/utils/theme.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:money_tracker/screens/home/home_scroll_subpage.dart';
+import 'package:money_tracker/features/app/home_scroll_subpage.dart';
 import 'package:money_tracker/utils/dates.dart';
 import 'package:money_tracker/utils/providers.dart';
 import 'package:money_tracker/utils/types.dart';

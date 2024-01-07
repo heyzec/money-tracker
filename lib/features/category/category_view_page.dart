@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_tracker/db/database.dart';
-import 'package:money_tracker/screens/settings/category_add_page.dart';
+import 'package:money_tracker/features/category/category_add_page.dart';
 import 'package:money_tracker/utils/providers.dart';
 import 'package:money_tracker/widgets/cards/category_card.dart';
 
